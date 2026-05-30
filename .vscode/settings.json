@@ -1,0 +1,8 @@
+{
+    "builder.serverUrl": "",
+    "builder.command": "",
+    "builder.runDevServer": false,
+    "builder.autoDetectDevServer": true,
+    "builder.launchType": "editor",
+    "CodeGPT.apiKey": "OpenAI"
+}
