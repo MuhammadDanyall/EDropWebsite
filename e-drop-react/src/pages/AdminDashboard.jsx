@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/AdminDashboard.css';
+import { API_BASE_URL } from '../config';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -71,7 +72,7 @@ const AdminDashboard = () => {
           console.error("No user found in sessionStorage");
         }
 
-        const API_BASE = "http://localhost:5000"; // Use localhost for consistency
+        const API_BASE = API_BASE_URL;
         const config = {
           headers: {
             'user-role': user?.role || '',

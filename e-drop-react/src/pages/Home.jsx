@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios'; // 1. Added axios for backend connection
 import { useAuthGate } from '../hooks/useAuthGate';
 import RestrictedAccessModal from '../components/RestrictedAccessModal';
+import { API_BASE_URL } from '../config';
 
 const Home = ({ onAuthClick }) => {
     const { user, isAuthAlertOpen, setIsAuthAlertOpen, handleRestrictedClick } = useAuthGate();
@@ -24,7 +25,7 @@ const Home = ({ onAuthClick }) => {
 
         try {
             // Try Shipping first
-            const resShipment = await axios.get(`http://localhost:5000/api/shipments/track/${trackingNumber}`);
+            const resShipment = await axios.get(`${API_BASE_URL}/api/shipments/track/${trackingNumber}`);
             if (resShipment.data.success) {
                 setTrackingResult({ ...resShipment.data.shipment, type: 'shipping' });
                 return;
@@ -32,7 +33,7 @@ const Home = ({ onAuthClick }) => {
         } catch (err) {
             // If not found in shipping, try Cargo
             try {
-                const resCargo = await axios.get(`http://localhost:5000/api/cargo/track/${trackingNumber}`);
+                const resCargo = await axios.get(`${API_BASE_URL}/api/cargo/track/${trackingNumber}`);
                 if (resCargo.data.success) {
                     setTrackingResult({ ...resCargo.data.cargo, type: 'cargo' });
                     return;
@@ -72,7 +73,7 @@ const Home = ({ onAuthClick }) => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/content');
+                const res = await axios.get(`${API_BASE_URL}/api/content`);
                 if (res.data) {
                     setSiteContent(res.data);
                 }
@@ -93,7 +94,7 @@ const Home = ({ onAuthClick }) => {
         setFormStatus({ type: 'info', msg: 'Sending...' });
 
         try {
-            const res = await axios.post('http://localhost:5000/api/contact/send', contactData);
+            const res = await axios.post(`${API_BASE_URL}/api/contact/send`, contactData);
             setFormStatus({ type: 'success', msg: res.data.message });
             setContactData({ name: '', email: '', message: '' }); // Clear form
         } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const [mode, setMode] = useState(initialMode);
@@ -47,7 +48,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/login', {
                 email: formData.email,
                 password: formData.password
             });
@@ -96,7 +97,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
 
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/signup', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/signup', {
                 fullName: formData.username,
                 email: formData.email,
                 password: formData.password,
@@ -125,7 +126,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/forgot-password', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/forgot-password', {
                 email: formData.email
             });
             setMessage({ type: 'success', text: res.data.message });
@@ -143,7 +144,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/verify-otp', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/verify-otp', {
                 email: formData.email,
                 otp: formData.otp
             });
@@ -162,7 +163,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/verify-admin-otp', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/verify-admin-otp', {
                 email: formData.email,
                 otp: formData.otp
             });
@@ -197,7 +198,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         }
         setIsLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/reset-password', {
+            const res = await axios.post('${API_BASE_URL}/api/auth/reset-password', {
                 email: formData.email,
                 otp: formData.otp,
                 newPassword: formData.password

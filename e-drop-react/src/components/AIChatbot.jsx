@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const AIChatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +34,7 @@ const AIChatbot = () => {
                     parts: [{ text: msg.text }]
                 }));
 
-            const res = await axios.post('http://localhost:5000/api/chatbot/chat', {
+            const res = await axios.post('${API_BASE_URL}/api/chatbot/chat', {
                 message: message,
                 history: historyForGemini
             });

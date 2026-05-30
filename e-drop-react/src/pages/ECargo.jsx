@@ -6,6 +6,7 @@ import CostEstimator from '../components/CostEstimator';
 import SmartMap from '../components/SmartMap';
 import PaymentModal from '../components/PaymentModal';
 import '../styles/ecargo.css';
+import { API_BASE_URL } from '../config';
 
 const ECargo = ({ userRole, onAuthClick }) => {
     const { isAuthAlertOpen, setIsAuthAlertOpen, handleRestrictedClick } = useAuthGate();
@@ -73,7 +74,7 @@ const ECargo = ({ userRole, onAuthClick }) => {
         setIsPaymentModalOpen(false);
 
         try {
-            const res = await axios.post('http://localhost:5000/api/cargo/add', formData);
+            const res = await axios.post('${API_BASE_URL}/api/cargo/add', formData);
             if (res.data.success) {
                 setBookingSuccess(res.data.trackingID);
                 setFormData({
@@ -97,7 +98,7 @@ const ECargo = ({ userRole, onAuthClick }) => {
         if (!trackingNumber) return;
 
         try {
-            const res = await axios.get(`http://localhost:5000/api/cargo/track/${trackingNumber}`);
+            const res = await axios.get(`${API_BASE_URL}/api/cargo/track/${trackingNumber}`);
             if (res.data.success) {
                 setTrackingResult(res.data.cargo);
                 setError(false);
@@ -126,7 +127,7 @@ const ECargo = ({ userRole, onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/content');
+                const res = await axios.get('${API_BASE_URL}/api/content');
                 if (res.data) {
                     setSiteContent(res.data);
                 }

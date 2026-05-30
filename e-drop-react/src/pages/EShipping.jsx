@@ -6,6 +6,7 @@ import RestrictedAccessModal from '../components/RestrictedAccessModal';
 import CostEstimator from '../components/CostEstimator';
 import PaymentModal from '../components/PaymentModal';
 import '../styles/eship.css';
+import { API_BASE_URL } from '../config';
 
 const EShipping = ({ onAuthClick }) => {
     const { isAuthAlertOpen, setIsAuthAlertOpen, handleRestrictedClick } = useAuthGate();
@@ -74,7 +75,7 @@ const EShipping = ({ onAuthClick }) => {
     const handleTrack = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.get(`http://localhost:5000/api/shipments/track/${trackingNumber}`);
+            const res = await axios.get(`${API_BASE_URL}/api/shipments/track/${trackingNumber}`);
             if (res.data.success) {
                 setTrackingResult(res.data.shipment);
                 setError(false);
@@ -112,7 +113,7 @@ const EShipping = ({ onAuthClick }) => {
         setSubmitting(true);
         setIsPaymentModalOpen(false);
         try {
-            const res = await axios.post('http://localhost:5000/api/shipments/add', formData);
+            const res = await axios.post('${API_BASE_URL}/api/shipments/add', formData);
             if (res.data.success) {
                 setSubmissionSuccess(res.data.trackingID);
                 setFormData({
@@ -147,7 +148,7 @@ const EShipping = ({ onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/content');
+                const res = await axios.get('${API_BASE_URL}/api/content');
                 if (res.data) {
                     setSiteContent(res.data);
                 }

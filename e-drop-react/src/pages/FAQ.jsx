@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthGate } from '../hooks/useAuthGate';
 import RestrictedAccessModal from '../components/RestrictedAccessModal';
+import { API_BASE_URL } from '../config';
 
 const FAQ = ({ onAuthClick }) => {
     const { isAuthAlertOpen, setIsAuthAlertOpen, handleRestrictedClick } = useAuthGate();
@@ -49,7 +50,7 @@ const FAQ = ({ onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://127.0.0.1:5000/api/content');
+                const res = await axios.get('${API_BASE_URL}/api/content');
                 if (res.data) {
                     setSiteContent(res.data);
                 }

@@ -4,6 +4,7 @@ import { useAuthGate } from '../hooks/useAuthGate';
 import RestrictedAccessModal from '../components/RestrictedAccessModal';
 import '../styles/ecab.css';
 import '../styles/mobile-fixes.css';
+import { API_BASE_URL } from '../config';
 
 const ECab = ({ onAuthClick }) => {
     const { isAuthAlertOpen, setIsAuthAlertOpen, handleRestrictedClick } = useAuthGate();
@@ -52,7 +53,7 @@ const ECab = ({ onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://127.0.0.1:5000/api/content');
+                const res = await axios.get('${API_BASE_URL}/api/content');
                 if (res.data) {
                     setSiteContent(res.data);
                 }

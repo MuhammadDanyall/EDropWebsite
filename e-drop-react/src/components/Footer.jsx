@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const Footer = () => {
     const [siteContent, setSiteContent] = useState({
@@ -16,7 +17,7 @@ const Footer = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const res = await axios.get('http://127.0.0.1:5000/api/content');
+                const res = await axios.get('${API_BASE_URL}/api/content');
                 if (res.data) {
                     setSiteContent(res.data);
                 }
