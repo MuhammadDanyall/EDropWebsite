@@ -17,7 +17,7 @@ const Footer = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const res = await axios.get('${API_BASE_URL}/api/content');
+                const res = await axios.get(`${API_BASE_URL}/api/content`);
                 if (res.data) {
                     setSiteContent(res.data);
                 }

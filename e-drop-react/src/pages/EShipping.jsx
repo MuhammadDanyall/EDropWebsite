@@ -113,7 +113,7 @@ const EShipping = ({ onAuthClick }) => {
         setSubmitting(true);
         setIsPaymentModalOpen(false);
         try {
-            const res = await axios.post('${API_BASE_URL}/api/shipments/add', formData);
+            const res = await axios.post(`${API_BASE_URL}/api/shipments/add`, formData);
             if (res.data.success) {
                 setSubmissionSuccess(res.data.trackingID);
                 setFormData({
@@ -148,7 +148,7 @@ const EShipping = ({ onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('${API_BASE_URL}/api/content');
+                const res = await axios.get(`${API_BASE_URL}/api/content`);
                 if (res.data) {
                     setSiteContent(res.data);
                 }

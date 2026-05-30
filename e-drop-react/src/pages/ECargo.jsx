@@ -74,7 +74,7 @@ const ECargo = ({ userRole, onAuthClick }) => {
         setIsPaymentModalOpen(false);
 
         try {
-            const res = await axios.post('${API_BASE_URL}/api/cargo/add', formData);
+            const res = await axios.post(`${API_BASE_URL}/api/cargo/add`, formData);
             if (res.data.success) {
                 setBookingSuccess(res.data.trackingID);
                 setFormData({
@@ -127,7 +127,7 @@ const ECargo = ({ userRole, onAuthClick }) => {
         // Fetch Dynamic Content
         const fetchContent = async () => {
             try {
-                const res = await axios.get('${API_BASE_URL}/api/content');
+                const res = await axios.get(`${API_BASE_URL}/api/content`);
                 if (res.data) {
                     setSiteContent(res.data);
                 }

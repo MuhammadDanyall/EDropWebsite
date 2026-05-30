@@ -34,7 +34,7 @@ const AIChatbot = () => {
                     parts: [{ text: msg.text }]
                 }));
 
-            const res = await axios.post('${API_BASE_URL}/api/chatbot/chat', {
+            const res = await axios.post(`${API_BASE_URL}/api/chatbot/chat`, {
                 message: message,
                 history: historyForGemini
             });

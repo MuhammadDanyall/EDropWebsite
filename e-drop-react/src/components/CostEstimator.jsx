@@ -27,7 +27,7 @@ const CostEstimator = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.post('${API_BASE_URL}/api/estimate/calculate', {
+            const res = await axios.post(`${API_BASE_URL}/api/estimate/calculate`, {
                 distance: parseFloat(distance),
                 weight: parseFloat(weight),
                 vehicleType
