@@ -50,7 +50,7 @@ const AIChatbot = () => {
     };
 
     return (
-        <div className="chatbot-container">
+        <div className={`chatbot-container ${isOpen ? 'chat-active' : ''}`}>
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className={`chatbot-toggle-btn ${isOpen ? 'open' : ''}`}
@@ -63,73 +63,71 @@ const AIChatbot = () => {
                 )}
             </button>
 
-            {isOpen && (
-                <div className="chatbot-window">
-                    <div className="chatbot-header">
-                        <div className="chatbot-header-icon">
-                            <i className="fas fa-robot"></i>
-                        </div>
-                        <div style={{ flex: 1, textAlign: 'left' }}>
-                            <div className="chatbot-header-title">E-Drop Support</div>
-                            <div className="chatbot-header-status">
-                                <span className="chatbot-status-dot"></span>
-                                <span style={{ animation: 'pulse 2s infinite' }}>Online</span>
-                            </div>
-                        </div>
-                        <button 
-                            onClick={() => setIsOpen(false)}
-                            className="chatbot-close-btn"
-                            aria-label="Close chat"
-                        >
-                            <i className="fas fa-times"></i>
-                        </button>
+            <div className={`chatbot-window ${isOpen ? 'visible' : ''}`}>
+                <div className="chatbot-header">
+                    <div className="chatbot-header-icon">
+                        <i className="fas fa-robot"></i>
                     </div>
+                    <div style={{ flex: 1, textAlign: 'left' }}>
+                        <div className="chatbot-header-title">E-Drop Support</div>
+                        <div className="chatbot-header-status">
+                            <span className="chatbot-status-dot"></span>
+                            <span style={{ animation: 'pulse 2s infinite' }}>Online</span>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={() => setIsOpen(false)}
+                        className="chatbot-close-btn"
+                        aria-label="Close chat"
+                    >
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
 
-                    <div className="chatbot-messages-area" ref={scrollRef}>
-                        {chatHistory.map((msg, index) => (
-                            <div key={index} className={`chatbot-message-row ${msg.role === 'user' ? 'user-row' : 'model-row'}`}>
-                                {msg.role === 'model' && (
-                                    <div className="chatbot-avatar">
-                                        <i className="fas fa-robot"></i>
-                                    </div>
-                                )}
-                                <div className={`chatbot-message-bubble ${msg.role === 'user' ? 'user-bubble' : 'model-bubble'}`}>
-                                    {msg.text}
-                                </div>
-                            </div>
-                        ))}
-                        {isLoading && (
-                            <div className="chatbot-message-row model-row">
+                <div className="chatbot-messages-area" ref={scrollRef}>
+                    {chatHistory.map((msg, index) => (
+                        <div key={index} className={`chatbot-message-row ${msg.role === 'user' ? 'user-row' : 'model-row'}`}>
+                            {msg.role === 'model' && (
                                 <div className="chatbot-avatar">
                                     <i className="fas fa-robot"></i>
                                 </div>
-                                <div className="chatbot-message-bubble model-bubble loading-bubble">
-                                    <div className="typing-dots">
-                                        <span></span><span></span><span></span>
-                                    </div>
+                            )}
+                            <div className={`chatbot-message-bubble ${msg.role === 'user' ? 'user-bubble' : 'model-bubble'}`}>
+                                {msg.text}
+                            </div>
+                        </div>
+                    ))}
+                    {isLoading && (
+                        <div className="chatbot-message-row model-row">
+                            <div className="chatbot-avatar">
+                                <i className="fas fa-robot"></i>
+                            </div>
+                            <div className="chatbot-message-bubble model-bubble loading-bubble">
+                                <div className="typing-dots">
+                                    <span></span><span></span><span></span>
                                 </div>
                             </div>
-                        )}
-                    </div>
-
-                    <form onSubmit={handleSend} className="chatbot-input-area">
-                        <input
-                            type="text"
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            placeholder="Type your message..."
-                            className="chatbot-input"
-                        />
-                        <button 
-                            type="submit" 
-                            className="chatbot-send-btn"
-                            disabled={isLoading || !message.trim()}
-                        >
-                            <i className="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
+                        </div>
+                    )}
                 </div>
-            )}
+
+                <form onSubmit={handleSend} className="chatbot-input-area">
+                    <input
+                        type="text"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="Type your message..."
+                        className="chatbot-input"
+                    />
+                    <button 
+                        type="submit" 
+                        className="chatbot-send-btn"
+                        disabled={isLoading || !message.trim()}
+                    >
+                        <i className="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
 
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
@@ -153,7 +151,7 @@ const AIChatbot = () => {
                     box-shadow: 0 8px 25px rgba(255, 107, 53, 0.45);
                     display: flex;
                     align-items: center;
-                    justifyContent: center;
+                    justify-content: center;
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     font-size: 24px;
                 }
@@ -176,6 +174,7 @@ const AIChatbot = () => {
                     right: 0;
                     width: 380px;
                     height: 550px;
+                    max-height: calc(100vh - 120px);
                     background-color: #ffffff;
                     border-radius: 24px;
                     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
@@ -184,7 +183,18 @@ const AIChatbot = () => {
                     overflow: hidden;
                     border: 1px solid rgba(0,0,0,0.06);
                     z-index: 100000;
-                    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    
+                    /* Hardware accelerated transitions */
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.95);
+                    pointer-events: none;
+                    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                
+                .chatbot-window.visible {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                    pointer-events: all;
                 }
                 
                 .chatbot-header {
@@ -203,7 +213,7 @@ const AIChatbot = () => {
                     border-radius: 12px;
                     display: flex;
                     align-items: center;
-                    justifyContent: center;
+                    justify-content: center;
                     font-size: 18px;
                 }
                 
@@ -240,7 +250,7 @@ const AIChatbot = () => {
                     transition: background 0.2s;
                     display: flex;
                     align-items: center;
-                    justifyContent: center;
+                    justify-content: center;
                     width: 32px;
                     height: 32px;
                 }
@@ -253,10 +263,25 @@ const AIChatbot = () => {
                     flex: 1;
                     padding: 20px;
                     overflow-y: auto;
+                    overscroll-behavior: contain;
                     display: flex;
                     flex-direction: column;
                     gap: 16px;
                     background-color: #fafbfc;
+                }
+                
+                .chatbot-messages-area::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .chatbot-messages-area::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .chatbot-messages-area::-webkit-scrollbar-thumb {
+                    background: rgba(0, 0, 0, 0.15);
+                    border-radius: 10px;
+                }
+                .chatbot-messages-area::-webkit-scrollbar-thumb:hover {
+                    background: rgba(0, 0, 0, 0.3);
                 }
                 
                 .chatbot-message-row {
@@ -280,7 +305,7 @@ const AIChatbot = () => {
                     background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
                     display: flex;
                     align-items: center;
-                    justifyContent: center;
+                    justify-content: center;
                     margin-right: 10px;
                     flex-shrink: 0;
                 }
@@ -301,7 +326,7 @@ const AIChatbot = () => {
                 }
                 
                 .chatbot-message-bubble.user-bubble {
-                    background-color: #ff6b35;
+                    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
                     color: #ffffff;
                     border-bottom-right-radius: 4px;
                 }
@@ -353,7 +378,7 @@ const AIChatbot = () => {
                     font-size: 16px;
                     display: flex;
                     align-items: center;
-                    justifyContent: center;
+                    justify-content: center;
                     transition: all 0.3s ease;
                     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
                     flex-shrink: 0;
@@ -378,10 +403,6 @@ const AIChatbot = () => {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.6; }
                 }
-                @keyframes slideUp {
-                    from { transform: translateY(20px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
                 
                 .typing-dots { display: flex; gap: 4px; }
                 .typing-dots span {
@@ -390,7 +411,7 @@ const AIChatbot = () => {
                 }
                 .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
                 .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
+                
                 /* Full Responsiveness on screens <= 576px */
                 @media (max-width: 576px) {
                     .chatbot-container {
@@ -398,27 +419,52 @@ const AIChatbot = () => {
                         right: 15px;
                     }
                     
-                    .chatbot-toggle-btn {
-                        width: 50px;
-                        height: 50px;
-                        font-size: 20px;
-                        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
-                    }
-                    
-                    .chatbot-window {
+                    .chatbot-container.chat-active {
                         position: fixed;
                         top: 0;
                         left: 0;
                         right: 0;
                         bottom: 0;
-                        width: 100vw;
-                        height: 100vh;
-                        height: 100dvh;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 999999;
+                    }
+                    
+                    .chatbot-container.chat-active .chatbot-toggle-btn {
+                        display: none !important;
+                    }
+                    
+                    .chatbot-toggle-btn {
+                        width: 55px;
+                        height: 55px;
+                        font-size: 20px;
+                        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+                    }
+                    
+                    .chatbot-window {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        width: 100%;
+                        height: auto; /* Let top and bottom control viewport height */
+                        max-height: none;
                         border-radius: 0;
                         border: none;
                         box-shadow: none;
-                        z-index: 999999;
-                        animation: slideUpMobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        
+                        /* Native slide up sheet animation */
+                        opacity: 0;
+                        transform: translateY(100%);
+                        pointer-events: none;
+                        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+                    }
+                    
+                    .chatbot-window.visible {
+                        opacity: 1;
+                        transform: translateY(0);
+                        pointer-events: all;
                     }
                     
                     .chatbot-header {
@@ -443,7 +489,7 @@ const AIChatbot = () => {
                     
                     .chatbot-input {
                         padding: 12px 16px;
-                        font-size: 16px; /* Avoid iOS auto-zoom */
+                        font-size: 16px; /* Prevents auto-zoom on iOS browsers */
                     }
                     
                     .chatbot-send-btn {
@@ -451,11 +497,6 @@ const AIChatbot = () => {
                         height: 42px;
                         font-size: 14px;
                     }
-                }
-                
-                @keyframes slideUpMobile {
-                    from { transform: translateY(100%); }
-                    to { transform: translateY(0); }
                 }
             `}</style>
         </div>
