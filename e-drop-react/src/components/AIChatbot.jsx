@@ -65,8 +65,12 @@ const AIChatbot = () => {
 
             <div className={`chatbot-window ${isOpen ? 'visible' : ''}`}>
                 <div className="chatbot-header">
-                    <div className="chatbot-header-icon">
-                        <i className="fas fa-robot"></i>
+                    <div className="chatbot-header-icon" style={{ overflow: 'hidden', padding: 0 }}>
+                        <img 
+                            src="/pictures/logo.jpeg" 
+                            alt="E-Drop Support Logo" 
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} 
+                        />
                     </div>
                     <div style={{ flex: 1, textAlign: 'left' }}>
                         <div className="chatbot-header-title">E-Drop Support</div>
@@ -88,8 +92,12 @@ const AIChatbot = () => {
                     {chatHistory.map((msg, index) => (
                         <div key={index} className={`chatbot-message-row ${msg.role === 'user' ? 'user-row' : 'model-row'}`}>
                             {msg.role === 'model' && (
-                                <div className="chatbot-avatar">
-                                    <i className="fas fa-robot"></i>
+                                <div className="chatbot-avatar" style={{ overflow: 'hidden', background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
+                                    <img 
+                                        src="/pictures/logo.jpeg" 
+                                        alt="E-Drop Avatar" 
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                                    />
                                 </div>
                             )}
                             <div className={`chatbot-message-bubble ${msg.role === 'user' ? 'user-bubble' : 'model-bubble'}`}>
@@ -99,8 +107,13 @@ const AIChatbot = () => {
                     ))}
                     {isLoading && (
                         <div className="chatbot-message-row model-row">
-                            <div className="chatbot-avatar">
-                                <i className="fas fa-robot"></i>
+                            <div className="chatbot-avatar" style={{ overflow: 'hidden', background: '#ffffff', border: '1px solid rgba(0,0,0,0.06)' }}>
+                                <img 
+                                    src="/pictures/logo.jpeg" 
+                                    alt="E-Drop Avatar" 
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                                
+                                />
                             </div>
                             <div className="chatbot-message-bubble model-bubble loading-bubble">
                                 <div className="typing-dots">
