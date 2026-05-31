@@ -123,7 +123,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
             // Send Email
             const mailOptions = {
-                from: `E-DROP SECURITY <${process.env.EMAIL_USER}>`,
+                from: process.env.EMAIL_USER,
                 to: user.email,
                 subject: 'Admin Dashboard Login OTP',
                 html: `
@@ -135,7 +135,13 @@ router.post('/login', loginValidation, async (req, res) => {
                     </div>
                 `
             };
-            transporter.sendMail(mailOptions);
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error("Nodemailer OTP Send Error:", error);
+                } else {
+                    console.log("OTP Email Sent Successfully:", info.response);
+                }
+            });
             console.log(`[ADMIN LOGIN OTP]: ${otp}`);
 
             return res.status(200).json({
