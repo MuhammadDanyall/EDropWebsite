@@ -125,7 +125,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email: adminEmail,
         password: adminPass
       });
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-admin-otp', {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/verify-admin-otp`, {
         email: adminEmail,
         otp: adminOtp
       });
@@ -170,7 +170,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email: adminEmail });
+      const res = await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email: adminEmail });
       alert(res.data.message);
       setLoginStep('reset');
     } catch (err) {
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/reset-password`, {
         email: adminEmail,
         otp: adminOtp,
         newPassword: newAdminPass
@@ -202,7 +202,7 @@ const AdminDashboard = () => {
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
       const res = await axios.patch(
-        `http://localhost:5000/api/admin/cargo/${cargoId}/status`,
+        `${API_BASE_URL}/api/admin/cargo/${cargoId}/status`,
         { status: newStatus },
         { headers: { 'user-role': user?.role || 'admin', 'user-id': user?.id || '' } }
       );
@@ -232,7 +232,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
-      const res = await axios.put(`http://localhost:5000/api/admin/users/${editingUser._id}`, editFormData, {
+      const res = await axios.put(`${API_BASE_URL}/api/admin/users/${editingUser._id}`, editFormData, {
         headers: { 'user-role': user?.role || '', 'user-id': user?.id || '' }
       });
       setUsers(users.map(u => u._id === editingUser._id ? res.data.user : u));
@@ -249,7 +249,7 @@ const AdminDashboard = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/users/${userId}`, {
         headers: {
           'user-role': user?.role || '',
           'user-id': user?.id || ''
@@ -270,7 +270,7 @@ const AdminDashboard = () => {
 
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
-      const res = await axios.post('http://localhost:5000/api/admin/reply', {
+      const res = await axios.post(`${API_BASE_URL}/api/admin/reply`, {
         messageId: replyingTo._id,
         userEmail: replyingTo.email,
         originalMsg: replyingTo.message,
@@ -300,7 +300,7 @@ const AdminDashboard = () => {
     setIsSavingContent(true);
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
-      const res = await axios.put('http://localhost:5000/api/content', siteContent, {
+      const res = await axios.put(`${API_BASE_URL}/api/content`, siteContent, {
         headers: { 'user-role': user?.role || 'admin' }
       });
       alert(res.data.message);
@@ -316,7 +316,7 @@ const AdminDashboard = () => {
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
       const res = await axios.patch(
-        `http://localhost:5000/api/admin/shipments/${shipmentId}/status`,
+        `${API_BASE_URL}/api/admin/shipments/${shipmentId}/status`,
         { status: newStatus },
         { headers: { 'user-role': user?.role || 'admin', 'user-id': user?.id || '' } }
       );
