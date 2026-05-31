@@ -21,6 +21,8 @@ const AdminDashboard = () => {
   const [newAdminPass, setNewAdminPass] = useState('');
   const [loginStep, setLoginStep] = useState('credentials'); // 'credentials', 'otp', 'forgot', 'reset'
   const [loginError, setLoginError] = useState('');
+  const [showAdminPass, setShowAdminPass] = useState(false);
+  const [showNewAdminPass, setShowNewAdminPass] = useState(false);
 
   // Reply System States
   const [replyingTo, setReplyingTo] = useState(null);
@@ -346,7 +348,9 @@ const AdminDashboard = () => {
       <div style={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a', fontFamily: 'Inter, sans-serif' }}>
         <div style={{ backgroundColor: '#141414', padding: '40px', borderRadius: '15px', width: '100%', maxWidth: '400px', border: '1px solid #333', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <div style={{ width: '60px', height: '60px', backgroundColor: '#ff6b35', color: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold', margin: '0 auto 15px' }}>E</div>
+            <div style={{ width: '60px', height: '60px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', overflow: 'hidden' }}>
+              <img src="/pictures/logo.jpeg" alt="E-Drop Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
             <h2 style={{ color: 'white', margin: 0 }}>Admin Portal</h2>
             <p style={{ color: '#888', marginTop: '10px' }}>Access restricted to authorized personnel</p>
           </div>
@@ -366,14 +370,23 @@ const AdminDashboard = () => {
               </div>
               <div style={{ marginBottom: '25px' }}>
                 <label style={{ display: 'block', color: '#ccc', marginBottom: '8px', fontSize: '0.9rem' }}>Security Password</label>
-                <input 
-                  type="password" 
-                  value={adminPass} 
-                  onChange={(e) => setAdminPass(e.target.value)} 
-                  style={{ width: '100%', padding: '12px', backgroundColor: '#000', border: '1px solid #444', borderRadius: '8px', color: 'white', outline: 'none' }}
-                  placeholder="••••••••"
-                  required
-                />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showAdminPass ? "text" : "password"} 
+                    value={adminPass} 
+                    onChange={(e) => setAdminPass(e.target.value)} 
+                    style={{ width: '100%', padding: '12px', paddingRight: '45px', backgroundColor: '#000', border: '1px solid #444', borderRadius: '8px', color: 'white', outline: 'none' }}
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminPass(!showAdminPass)}
+                    style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                  >
+                    <i className={showAdminPass ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                  </button>
+                </div>
               </div>
               {loginError && <p style={{ color: '#ff4d4d', fontSize: '0.85rem', marginBottom: '20px', textAlign: 'center' }}>{loginError}</p>}
               <button type="submit" style={{ width: '100%', padding: '14px', backgroundColor: '#ff6b35', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', transition: '0.3s' }}>
@@ -449,14 +462,23 @@ const AdminDashboard = () => {
                 </div>
                 <div style={{ marginBottom: '25px' }}>
                     <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>New Security Password</label>
-                    <input 
-                        type="password" 
-                        value={newAdminPass} 
-                        onChange={(e) => setNewAdminPass(e.target.value)} 
-                        style={{ width: '100%', padding: '12px', backgroundColor: '#000', border: '1px solid #444', borderRadius: '8px', color: 'white', outline: 'none' }}
-                        placeholder="Min 8 chars, 1 Uppercase, 1 Special"
-                        required
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <input 
+                          type={showNewAdminPass ? "text" : "password"} 
+                          value={newAdminPass} 
+                          onChange={(e) => setNewAdminPass(e.target.value)} 
+                          style={{ width: '100%', padding: '12px', paddingRight: '45px', backgroundColor: '#000', border: '1px solid #444', borderRadius: '8px', color: 'white', outline: 'none' }}
+                          placeholder="Min 8 chars, 1 Uppercase, 1 Special"
+                          required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewAdminPass(!showNewAdminPass)}
+                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                      >
+                        <i className={showNewAdminPass ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                      </button>
+                    </div>
                 </div>
                 {loginError && <p style={{ color: '#ff4d4d', fontSize: '0.85rem', marginBottom: '20px' }}>{loginError}</p>}
                 <button type="submit" style={{ width: '100%', padding: '14px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -488,7 +510,9 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-brand">
-          <div className="brand-logo">E</div>
+          <div className="brand-logo">
+            <img src="/pictures/logo.jpeg" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
           <span>AdminPanel</span>
         </div>
 

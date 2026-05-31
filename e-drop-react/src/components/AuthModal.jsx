@@ -17,12 +17,16 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const [message, setMessage] = useState({ type: '', text: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [isAgreed, setIsAgreed] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const modalContentRef = useRef(null);
 
     useEffect(() => {
         setMode(initialMode);
         setMessage({ type: '', text: '' });
         setIsAgreed(false);
+        setShowPassword(false);
+        setShowConfirmPassword(false);
     }, [initialMode, isOpen]);
 
     // Scroll modal to top when message or mode changes
@@ -249,13 +253,23 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                 </div>
                                 <div className="form-group">
                                     <label>Password</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        placeholder="Enter password"
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            placeholder="Enter password"
+                                            onChange={handleChange}
+                                            style={{ paddingRight: '45px', width: '100%' }}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                                        >
+                                            <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <button type="submit" className="auth-submit-btn" disabled={isLoading}>{isLoading ? 'Please wait...' : 'Login'}</button>
                             </form>
@@ -290,11 +304,43 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                 </div>
                                 <div className="form-group">
                                     <label>Password</label>
-                                    <input type="password" name="password" placeholder="Create password" onChange={handleChange} required />
+                                    <div style={{ position: 'relative' }}>
+                                        <input 
+                                            type={showPassword ? "text" : "password"} 
+                                            name="password" 
+                                            placeholder="Create password" 
+                                            onChange={handleChange} 
+                                            style={{ paddingRight: '45px', width: '100%' }}
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                                        >
+                                            <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="form-group">
                                     <label>Confirm Password</label>
-                                    <input type="password" name="confirmPassword" placeholder="Confirm password" onChange={handleChange} required />
+                                    <div style={{ position: 'relative' }}>
+                                        <input 
+                                            type={showConfirmPassword ? "text" : "password"} 
+                                            name="confirmPassword" 
+                                            placeholder="Confirm password" 
+                                            onChange={handleChange} 
+                                            style={{ paddingRight: '45px', width: '100%' }}
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                                        >
+                                            <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="form-group checkbox-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
                                     <input 
@@ -363,11 +409,43 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                             <form onSubmit={handleResetPassword}>
                                 <div className="form-group">
                                     <label>New Password</label>
-                                    <input type="password" name="password" placeholder="Enter new password" onChange={handleChange} required />
+                                    <div style={{ position: 'relative' }}>
+                                        <input 
+                                            type={showPassword ? "text" : "password"} 
+                                            name="password" 
+                                            placeholder="Enter new password" 
+                                            onChange={handleChange} 
+                                            style={{ paddingRight: '45px', width: '100%' }}
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                                        >
+                                            <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="form-group">
                                     <label>Confirm New Password</label>
-                                    <input type="password" name="confirmPassword" placeholder="Confirm new password" onChange={handleChange} required />
+                                    <div style={{ position: 'relative' }}>
+                                        <input 
+                                            type={showConfirmPassword ? "text" : "password"} 
+                                            name="confirmPassword" 
+                                            placeholder="Confirm new password" 
+                                            onChange={handleChange} 
+                                            style={{ paddingRight: '45px', width: '100%' }}
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#ff6b35', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 5px' }}
+                                        >
+                                            <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <button type="submit" className="auth-submit-btn" disabled={isLoading}>{isLoading ? 'Please wait...' : 'Reset Password'}</button>
                             </form>
