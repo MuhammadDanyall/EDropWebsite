@@ -826,6 +826,7 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  display: inline-block;
 }
 
 .about-title span::after {
@@ -916,6 +917,7 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  display: inline-block;
 }
 
 .services-title span::after {
@@ -1352,15 +1354,15 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  display: inline-block;
 }
 
 .testimonials-title span::after {
   content: "";
   position: absolute;
   bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
+  left: 0;
+  width: 100%;
   height: 4px;
   background: var(--accent-gradient);
   border-radius: 2px;
@@ -1520,15 +1522,15 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  display: inline-block;
 }
 
 .team-title span::after {
   content: "";
   position: absolute;
   bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
+  left: 0;
+  width: 100%;
   height: 4px;
   background: var(--accent-gradient);
   border-radius: 2px;
