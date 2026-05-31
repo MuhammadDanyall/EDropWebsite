@@ -50,15 +50,11 @@ const AIChatbot = () => {
     };
 
     return (
-        <div style={styles.container}>
+        <div className="chatbot-container">
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                style={{
-                    ...styles.toggleBtn,
-                    transform: isOpen ? 'rotate(90deg) scale(0.9)' : 'rotate(0deg) scale(1)'
-                }}
-                onMouseEnter={(e) => e.target.style.transform = isOpen ? 'rotate(90deg) scale(0.95)' : 'scale(1.1)'}
-                onMouseLeave={(e) => e.target.style.transform = isOpen ? 'rotate(90deg) scale(0.9)' : 'scale(1)'}
+                className={`chatbot-toggle-btn ${isOpen ? 'open' : ''}`}
+                aria-label="Toggle chat"
             >
                 {isOpen ? (
                     <i className="fas fa-times"></i>
@@ -68,86 +64,46 @@ const AIChatbot = () => {
             </button>
 
             {isOpen && (
-                <div style={styles.window}>
-                    <div style={styles.header}>
-                        <div style={styles.headerIcon}>
+                <div className="chatbot-window">
+                    <div className="chatbot-header">
+                        <div className="chatbot-header-icon">
                             <i className="fas fa-robot"></i>
                         </div>
                         <div style={{ flex: 1, textAlign: 'left' }}>
-                            <div style={styles.headerTitle}>E-Drop Support</div>
-                            <div style={styles.headerStatus}>
-                                <span style={styles.statusDot}></span>
+                            <div className="chatbot-header-title">E-Drop Support</div>
+                            <div className="chatbot-header-status">
+                                <span className="chatbot-status-dot"></span>
                                 <span style={{ animation: 'pulse 2s infinite' }}>Online</span>
                             </div>
                         </div>
                         <button 
                             onClick={() => setIsOpen(false)}
-                            style={{
-                                background: 'none',
-                                border: 'none',
-                                color: 'white',
-                                fontSize: '18px',
-                                cursor: 'pointer',
-                                padding: '5px',
-                                borderRadius: '50%',
-                                transition: 'background 0.2s'
-                            }}
-                            onMouseEnter={(e) => e.target.style.background = 'rgba(255,255,255,0.1)'}
-                            onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                            className="chatbot-close-btn"
+                            aria-label="Close chat"
                         >
                             <i className="fas fa-times"></i>
                         </button>
                     </div>
 
-                    <div style={styles.messagesArea} ref={scrollRef}>
+                    <div className="chatbot-messages-area" ref={scrollRef}>
                         {chatHistory.map((msg, index) => (
-                            <div key={index} style={{
-                                ...styles.messageRow,
-                                justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start'
-                            }}>
+                            <div key={index} className={`chatbot-message-row ${msg.role === 'user' ? 'user-row' : 'model-row'}`}>
                                 {msg.role === 'model' && (
-                                    <div style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        borderRadius: '50%',
-                                        background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginRight: '10px',
-                                        flexShrink: 0
-                                    }}>
-                                        <i className="fas fa-robot" style={{ fontSize: '14px', color: 'white' }}></i>
+                                    <div className="chatbot-avatar">
+                                        <i className="fas fa-robot"></i>
                                     </div>
                                 )}
-                                <div style={{
-                                    ...styles.messageBubble,
-                                    backgroundColor: msg.role === 'user' ? '#ff6b35' : '#ffffff',
-                                    color: msg.role === 'user' ? '#ffffff' : '#333333',
-                                    borderBottomLeftRadius: msg.role === 'model' ? '4px' : '18px',
-                                    borderBottomRightRadius: msg.role === 'user' ? '4px' : '18px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-                                }}>
+                                <div className={`chatbot-message-bubble ${msg.role === 'user' ? 'user-bubble' : 'model-bubble'}`}>
                                     {msg.text}
                                 </div>
                             </div>
                         ))}
                         {isLoading && (
-                            <div style={{ ...styles.messageRow, justifyContent: 'flex-start' }}>
-                                <div style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginRight: '10px',
-                                    flexShrink: 0
-                                }}>
-                                    <i className="fas fa-robot" style={{ fontSize: '14px', color: 'white' }}></i>
+                            <div className="chatbot-message-row model-row">
+                                <div className="chatbot-avatar">
+                                    <i className="fas fa-robot"></i>
                                 </div>
-                                <div style={{ ...styles.messageBubble, backgroundColor: '#ffffff', padding: '15px 18px' }}>
+                                <div className="chatbot-message-bubble model-bubble loading-bubble">
                                     <div className="typing-dots">
                                         <span></span><span></span><span></span>
                                     </div>
@@ -156,21 +112,17 @@ const AIChatbot = () => {
                         )}
                     </div>
 
-                    <form onSubmit={handleSend} style={styles.inputArea}>
+                    <form onSubmit={handleSend} className="chatbot-input-area">
                         <input
                             type="text"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             placeholder="Type your message..."
-                            style={styles.input}
+                            className="chatbot-input"
                         />
                         <button 
                             type="submit" 
-                            style={{
-                                ...styles.sendBtn,
-                                opacity: isLoading || !message.trim() ? 0.5 : 1,
-                                cursor: isLoading || !message.trim() ? 'not-allowed' : 'pointer'
-                            }} 
+                            className="chatbot-send-btn"
                             disabled={isLoading || !message.trim()}
                         >
                             <i className="fas fa-paper-plane"></i>
@@ -180,6 +132,244 @@ const AIChatbot = () => {
             )}
 
             <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+                
+                .chatbot-container {
+                    position: fixed;
+                    bottom: 25px;
+                    right: 25px;
+                    z-index: 99999;
+                    font-family: 'Poppins', sans-serif;
+                }
+                
+                .chatbot-toggle-btn {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.45);
+                    display: flex;
+                    align-items: center;
+                    justifyContent: center;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    font-size: 24px;
+                }
+                
+                .chatbot-toggle-btn:hover {
+                    transform: scale(1.1);
+                }
+                
+                .chatbot-toggle-btn.open {
+                    transform: rotate(90deg) scale(0.9);
+                }
+                
+                .chatbot-toggle-btn.open:hover {
+                    transform: rotate(90deg) scale(0.95);
+                }
+                
+                .chatbot-window {
+                    position: absolute;
+                    bottom: 80px;
+                    right: 0;
+                    width: 380px;
+                    height: 550px;
+                    background-color: #ffffff;
+                    border-radius: 24px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    border: 1px solid rgba(0,0,0,0.06);
+                    z-index: 100000;
+                    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .chatbot-header {
+                    padding: 18px 22px;
+                    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                }
+                
+                .chatbot-header-icon {
+                    width: 42px;
+                    height: 42px;
+                    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justifyContent: center;
+                    font-size: 18px;
+                }
+                
+                .chatbot-header-title {
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 2px;
+                }
+                
+                .chatbot-header-status {
+                    font-size: 11px;
+                    color: rgba(255,255,255,0.7);
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                }
+                
+                .chatbot-status-dot {
+                    width: 8px;
+                    height: 8px;
+                    background-color: #4ade80;
+                    border-radius: 50%;
+                    box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+                }
+                
+                .chatbot-close-btn {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 18px;
+                    cursor: pointer;
+                    padding: 5px;
+                    border-radius: 50%;
+                    transition: background 0.2s;
+                    display: flex;
+                    align-items: center;
+                    justifyContent: center;
+                    width: 32px;
+                    height: 32px;
+                }
+                
+                .chatbot-close-btn:hover {
+                    background: rgba(255,255,255,0.1);
+                }
+                
+                .chatbot-messages-area {
+                    flex: 1;
+                    padding: 20px;
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    background-color: #fafbfc;
+                }
+                
+                .chatbot-message-row {
+                    display: flex;
+                    width: 100%;
+                    align-items: flex-end;
+                }
+                
+                .chatbot-message-row.user-row {
+                    justify-content: flex-end;
+                }
+                
+                .chatbot-message-row.model-row {
+                    justify-content: flex-start;
+                }
+                
+                .chatbot-avatar {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                    display: flex;
+                    align-items: center;
+                    justifyContent: center;
+                    margin-right: 10px;
+                    flex-shrink: 0;
+                }
+                
+                .chatbot-avatar i {
+                    font-size: 14px;
+                    color: white;
+                }
+                
+                .chatbot-message-bubble {
+                    max-width: 78%;
+                    padding: 12px 16px;
+                    border-radius: 18px;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    word-wrap: break-word;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                }
+                
+                .chatbot-message-bubble.user-bubble {
+                    background-color: #ff6b35;
+                    color: #ffffff;
+                    border-bottom-right-radius: 4px;
+                }
+                
+                .chatbot-message-bubble.model-bubble {
+                    background-color: #ffffff;
+                    color: #333333;
+                    border-bottom-left-radius: 4px;
+                }
+                
+                .chatbot-message-bubble.loading-bubble {
+                    padding: 15px 18px;
+                }
+                
+                .chatbot-input-area {
+                    padding: 16px;
+                    background-color: white;
+                    display: flex;
+                    gap: 12px;
+                    border-top: 1px solid #f0f0f0;
+                    align-items: center;
+                }
+                
+                .chatbot-input {
+                    flex: 1;
+                    padding: 14px 18px;
+                    background-color: #f5f7fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 50px;
+                    outline: none;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                }
+                
+                .chatbot-input:focus {
+                    border-color: #ff6b35;
+                    background-color: #ffffff;
+                    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+                }
+                
+                .chatbot-send-btn {
+                    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 48px;
+                    height: 48px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    justifyContent: center;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+                    flex-shrink: 0;
+                }
+                
+                .chatbot-send-btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    box-shadow: none;
+                }
+                
+                .chatbot-send-btn:not(:disabled):hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+                }
+                
                 @keyframes bounce {
                     0%, 100% { transform: translateY(0); }
                     50% { transform: translateY(-5px); }
@@ -188,6 +378,11 @@ const AIChatbot = () => {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.6; }
                 }
+                @keyframes slideUp {
+                    from { transform: translateY(20px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+                
                 .typing-dots { display: flex; gap: 4px; }
                 .typing-dots span {
                     width: 8px; height: 8px; background: #999; border-radius: 50%;
@@ -195,139 +390,76 @@ const AIChatbot = () => {
                 }
                 .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
                 .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+                /* Full Responsiveness on screens <= 576px */
+                @media (max-width: 576px) {
+                    .chatbot-container {
+                        bottom: 15px;
+                        right: 15px;
+                    }
+                    
+                    .chatbot-toggle-btn {
+                        width: 50px;
+                        height: 50px;
+                        font-size: 20px;
+                        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+                    }
+                    
+                    .chatbot-window {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        height: 100dvh;
+                        border-radius: 0;
+                        border: none;
+                        box-shadow: none;
+                        z-index: 999999;
+                        animation: slideUpMobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    
+                    .chatbot-header {
+                        padding: calc(15px + env(safe-area-inset-top, 0px)) 18px 15px 18px;
+                    }
+                    
+                    .chatbot-messages-area {
+                        padding: 15px;
+                        gap: 12px;
+                    }
+                    
+                    .chatbot-message-bubble {
+                        max-width: 85%;
+                        padding: 10px 14px;
+                        font-size: 13.5px;
+                    }
+                    
+                    .chatbot-input-area {
+                        padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)) 14px;
+                        gap: 8px;
+                    }
+                    
+                    .chatbot-input {
+                        padding: 12px 16px;
+                        font-size: 16px; /* Avoid iOS auto-zoom */
+                    }
+                    
+                    .chatbot-send-btn {
+                        width: 42px;
+                        height: 42px;
+                        font-size: 14px;
+                    }
+                }
+                
+                @keyframes slideUpMobile {
+                    from { transform: translateY(100%); }
+                    to { transform: translateY(0); }
+                }
             `}</style>
         </div>
     );
-};
-
-const styles = {
-    container: {
-        position: 'fixed',
-        bottom: '25px',
-        right: '25px',
-        zIndex: 99999,
-        fontFamily: "'Poppins', sans-serif"
-    },
-    toggleBtn: {
-        width: '60px',
-        height: '60px',
-        borderRadius: '50%',
-        background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-        color: 'white',
-        border: 'none',
-        cursor: 'pointer',
-        boxShadow: '0 8px 25px rgba(255, 107, 53, 0.45)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        fontSize: '24px'
-    },
-    window: {
-        position: 'absolute',
-        bottom: '80px',
-        right: '0',
-        width: '380px',
-        height: '550px',
-        backgroundColor: '#ffffff',
-        borderRadius: '24px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        border: '1px solid rgba(0,0,0,0.06)'
-    },
-    header: {
-        padding: '18px 22px',
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '14px'
-    },
-    headerIcon: {
-        width: '42px',
-        height: '42px',
-        background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-        borderRadius: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '18px'
-    },
-    headerTitle: {
-        fontWeight: '700',
-        fontSize: '15px',
-        marginBottom: '2px'
-    },
-    headerStatus: {
-        fontSize: '11px',
-        color: 'rgba(255,255,255,0.7)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px'
-    },
-    statusDot: {
-        width: '8px',
-        height: '8px',
-        backgroundColor: '#4ade80',
-        borderRadius: '50%',
-        boxShadow: '0 0 8px rgba(74, 222, 128, 0.6)'
-    },
-    messagesArea: {
-        flex: 1,
-        padding: '20px',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        backgroundColor: '#fafbfc'
-    },
-    messageRow: {
-        display: 'flex',
-        width: '100%',
-        alignItems: 'flex-end'
-    },
-    messageBubble: {
-        maxWidth: '78%',
-        padding: '12px 16px',
-        borderRadius: '18px',
-        fontSize: '14px',
-        lineHeight: '1.5',
-        wordWrap: 'break-word'
-    },
-    inputArea: {
-        padding: '16px',
-        backgroundColor: 'white',
-        display: 'flex',
-        gap: '12px',
-        borderTop: '1px solid #f0f0f0'
-    },
-    input: {
-        flex: 1,
-        padding: '14px 18px',
-        backgroundColor: '#f5f7fa',
-        border: '1px solid #e9ecef',
-        borderRadius: '50px',
-        outline: 'none',
-        fontSize: '14px',
-        transition: 'border-color 0.3s, box-shadow 0.3s'
-    },
-    sendBtn: {
-        background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-        color: 'white',
-        border: 'none',
-        borderRadius: '50%',
-        width: '48px',
-        height: '48px',
-        cursor: 'pointer',
-        fontSize: '16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 0.3s ease',
-        boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)'
-    }
 };
 
 export default AIChatbot;
