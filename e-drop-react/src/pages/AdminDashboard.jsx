@@ -33,6 +33,12 @@ const AdminDashboard = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({ fullName: '', phone: '', role: '' });
 
+  // Edit Shipment/Cargo States
+  const [editingShipment, setEditingShipment] = useState(null);
+  const [editingCargo, setEditingCargo] = useState(null);
+  const [editShipmentFormData, setEditShipmentFormData] = useState({});
+  const [editCargoFormData, setEditCargoFormData] = useState({});
+
   // Website Content States
   const [siteContent, setSiteContent] = useState({
     heroTitle: '',
@@ -262,6 +268,110 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Error deleting user:', error);
       alert("Failed to delete user.");
+    }
+  };
+
+  // Function to Edit Shipment
+  const handleEditShipmentClick = (shipment) => {
+    setEditingShipment(shipment);
+    setEditShipmentFormData({ ...shipment });
+  };
+
+  const handleEditShipmentChange = (e) => {
+    setEditShipmentFormData({ ...editShipmentFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditShipmentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      const res = await axios.put(
+        `${API_BASE_URL}/api/admin/shipments/${editingShipment._id}`,
+        editShipmentFormData,
+        {
+          headers: {
+            'user-role': user?.role || '',
+            'user-id': user?.id || ''
+          }
+        }
+      );
+      setShipments(shipments.map(s => s._id === editingShipment._id ? res.data.shipment : s));
+      setEditingShipment(null);
+      alert("Shipment updated successfully.");
+    } catch (error) {
+      console.error('Error updating shipment:', error);
+      alert("Failed to update shipment.");
+    }
+  };
+
+  // Function to Delete Shipment
+  const handleDeleteShipment = async (shipmentId) => {
+    if (!window.confirm("Are you sure you want to delete this shipment?")) return;
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      await axios.delete(`${API_BASE_URL}/api/admin/shipments/${shipmentId}`, {
+        headers: {
+          'user-role': user?.role || '',
+          'user-id': user?.id || ''
+        }
+      });
+      setShipments(shipments.filter(s => s._id !== shipmentId));
+      alert("Shipment deleted successfully.");
+    } catch (error) {
+      console.error('Error deleting shipment:', error);
+      alert("Failed to delete shipment.");
+    }
+  };
+
+  // Function to Edit Cargo
+  const handleEditCargoClick = (cargo) => {
+    setEditingCargo(cargo);
+    setEditCargoFormData({ ...cargo });
+  };
+
+  const handleEditCargoChange = (e) => {
+    setEditCargoFormData({ ...editCargoFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditCargoSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      const res = await axios.put(
+        `${API_BASE_URL}/api/admin/cargo/${editingCargo._id}`,
+        editCargoFormData,
+        {
+          headers: {
+            'user-role': user?.role || '',
+            'user-id': user?.id || ''
+          }
+        }
+      );
+      setCargoOrders(cargoOrders.map(c => c._id === editingCargo._id ? res.data.cargo : c));
+      setEditingCargo(null);
+      alert("Cargo updated successfully.");
+    } catch (error) {
+      console.error('Error updating cargo:', error);
+      alert("Failed to update cargo.");
+    }
+  };
+
+  // Function to Delete Cargo
+  const handleDeleteCargo = async (cargoId) => {
+    if (!window.confirm("Are you sure you want to delete this cargo order?")) return;
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      await axios.delete(`${API_BASE_URL}/api/admin/cargo/${cargoId}`, {
+        headers: {
+          'user-role': user?.role || '',
+          'user-id': user?.id || ''
+        }
+      });
+      setCargoOrders(cargoOrders.filter(c => c._id !== cargoId));
+      alert("Cargo order deleted successfully.");
+    } catch (error) {
+      console.error('Error deleting cargo:', error);
+      alert("Failed to delete cargo order.");
     }
   };
 
@@ -534,10 +644,7 @@ const AdminDashboard = () => {
             Messages
             {pendingMessagesCount > 0 && <span className="nav-badge">{pendingMessagesCount}</span>}
           </button>
-          <button className={`nav-btn ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-            Site Content
-          </button>
+
           <button className={`nav-btn ${activeTab === 'cargo' ? 'active' : ''}`} onClick={() => setActiveTab('cargo')}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline></svg>
             Cargo Orders
@@ -785,7 +892,7 @@ const AdminDashboard = () => {
                         <th style={{ minWidth: '220px' }}>Product & Route</th>
                         <th style={{ minWidth: '200px' }}>Notes</th>
                         <th style={{ minWidth: '150px' }}>Status</th>
-                        <th style={{ minWidth: '150px' }}>Action</th>
+                        <th style={{ minWidth: '200px' }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -825,26 +932,44 @@ const AdminDashboard = () => {
                           </td>
                           <td><span className={`pill ${shipment.status.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/\s+/g, '-').toLowerCase()}`}>{shipment.status}</span></td>
                           <td>
-                            <select 
-                              value={shipment.status} 
-                              onChange={(e) => handleShipmentStatusChange(shipment._id, e.target.value)}
-                              style={{ 
-                                padding: '6px', 
-                                borderRadius: '6px', 
-                                border: '1px solid #d1d5db', 
-                                backgroundColor: '#f9fafb', 
-                                color: '#1f2937', 
-                                outline: 'none' 
-                              }}
-                            >
-                              <option value="Order Submitted">Order Submitted</option>
-                              <option value="Processing">Processing</option>
-                              <option value="Shipped from Origin">Shipped from Origin</option>
-                              <option value="Arrived at Port (Pakistan)">Arrived at Port (Pakistan)</option>
-                              <option value="In Cargo Transit">In Cargo Transit</option>
-                              <option value="Out for Delivery">Out for Delivery</option>
-                              <option value="Delivered">Delivered</option>
-                            </select>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              <select 
+                                value={shipment.status} 
+                                onChange={(e) => handleShipmentStatusChange(shipment._id, e.target.value)}
+                                style={{ 
+                                  padding: '6px', 
+                                  borderRadius: '6px', 
+                                  border: '1px solid #d1d5db', 
+                                  backgroundColor: '#f9fafb', 
+                                  color: '#1f2937', 
+                                  outline: 'none' 
+                                }}
+                              >
+                                <option value="Order Submitted">Order Submitted</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped from Origin">Shipped from Origin</option>
+                                <option value="Arrived at Port (Pakistan)">Arrived at Port (Pakistan)</option>
+                                <option value="In Cargo Transit">In Cargo Transit</option>
+                                <option value="Out for Delivery">Out for Delivery</option>
+                                <option value="Delivered">Delivered</option>
+                              </select>
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <button 
+                                  className="secondary-btn" 
+                                  style={{ backgroundColor: '#3498db', color: '#fff', borderColor: '#3498db', padding: '4px 10px', fontSize: '0.8rem' }}
+                                  onClick={() => handleEditShipmentClick(shipment)}
+                                >
+                                  Edit
+                                </button>
+                                <button 
+                                  className="secondary-btn" 
+                                  style={{ backgroundColor: '#ff4d4d', color: '#fff', borderColor: '#ff4d4d', padding: '4px 10px', fontSize: '0.8rem' }}
+                                  onClick={() => handleDeleteShipment(shipment._id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
                           </td>
                         </tr>
                       )) : (
@@ -876,7 +1001,7 @@ const AdminDashboard = () => {
                         <th style={{ minWidth: '180px' }}>Receiver</th>
                         <th style={{ minWidth: '220px' }}>Cargo & Address</th>
                         <th style={{ minWidth: '150px' }}>Status</th>
-                        <th style={{ minWidth: '150px' }}>Action</th>
+                        <th style={{ minWidth: '200px' }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -911,21 +1036,39 @@ const AdminDashboard = () => {
                           </td>
                           <td><span className={`pill ${cargo.status.toLowerCase().replace(/\s+/g, '-')}`}>{cargo.status}</span></td>
                           <td>
-                            <select 
-                              value={cargo.status} 
-                              onChange={(e) => handleCargoStatusChange(cargo._id, e.target.value)}
-                              style={{ 
-                                padding: '6px', 
-                                borderRadius: '6px', 
-                                border: '1px solid #d1d5db', 
-                                backgroundColor: '#f9fafb', 
-                              }}
-                            >
-                              <option value="Booked">Booked</option>
-                              <option value="Picked Up">Picked Up</option>
-                              <option value="In Transit">In Transit</option>
-                              <option value="Delivered">Delivered</option>
-                            </select>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              <select 
+                                value={cargo.status} 
+                                onChange={(e) => handleCargoStatusChange(cargo._id, e.target.value)}
+                                style={{ 
+                                  padding: '6px', 
+                                  borderRadius: '6px', 
+                                  border: '1px solid #d1d5db', 
+                                  backgroundColor: '#f9fafb', 
+                                }}
+                              >
+                                <option value="Booked">Booked</option>
+                                <option value="Picked Up">Picked Up</option>
+                                <option value="In Transit">In Transit</option>
+                                <option value="Delivered">Delivered</option>
+                              </select>
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <button 
+                                  className="secondary-btn" 
+                                  style={{ backgroundColor: '#3498db', color: '#fff', borderColor: '#3498db', padding: '4px 10px', fontSize: '0.8rem' }}
+                                  onClick={() => handleEditCargoClick(cargo)}
+                                >
+                                  Edit
+                                </button>
+                                <button 
+                                  className="secondary-btn" 
+                                  style={{ backgroundColor: '#ff4d4d', color: '#fff', borderColor: '#ff4d4d', padding: '4px 10px', fontSize: '0.8rem' }}
+                                  onClick={() => handleDeleteCargo(cargo._id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
                           </td>
                         </tr>
                       )) : (
@@ -943,219 +1086,7 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Site Content Tab Content */}
-          {activeTab === 'content' && (
-            <div className="fade-in">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                <h1 className="page-heading" style={{ margin: 0 }}>Universal Content Manager</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#1a1a1a', padding: '10px 20px', borderRadius: '10px', border: '1px solid #333' }}>
-                  <span style={{ color: '#888', fontWeight: 'bold' }}>Select Page:</span>
-                  <select 
-                    value={selectedPage} 
-                    onChange={(e) => setSelectedPage(e.target.value)}
-                    style={{ backgroundColor: '#000', color: '#ff6b35', border: '1px solid #ff6b35', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', outline: 'none', fontWeight: 'bold' }}
-                  >
-                    <option value="home">Home Page</option>
-                    <option value="about">About Page</option>
-                    <option value="services">Service Pages (eCab/eShip/eCargo)</option>
-                    <option value="faq">FAQ Page</option>
-                    <option value="legal">Legal (Privacy/Terms)</option>
-                    <option value="social">Social Media Links</option>
-                  </select>
-                </div>
-              </div>
 
-              <div className="admin-card">
-                <div className="card-body">
-                  <form onSubmit={handleSaveSiteContent}>
-                    
-                    {/* HOME PAGE EDITOR */}
-                    {selectedPage === 'home' && (
-                      <div className="fade-in">
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                          <div className="form-section">
-                            <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Hero Section</h3>
-                            <div className="form-group" style={{ marginBottom: '20px' }}>
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Hero Title (Main Heading)</label>
-                              <textarea name="heroTitle" value={siteContent.heroTitle} onChange={handleSiteContentChange} style={{ width: '100%', height: '80px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group">
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Hero Subtitle</label>
-                              <input type="text" name="heroSubtitle" value={siteContent.heroSubtitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-
-                          <div className="form-section">
-                            <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Contact Info</h3>
-                            <div className="form-group" style={{ marginBottom: '15px' }}>
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '5px' }}>Phone Number</label>
-                              <input type="text" name="contactPhone" value={siteContent.contactPhone} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group" style={{ marginBottom: '15px' }}>
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '5px' }}>Email Address</label>
-                              <input type="email" name="contactEmail" value={siteContent.contactEmail} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group">
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '5px' }}>Location/Address</label>
-                              <input type="text" name="contactLocation" value={siteContent.contactLocation} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-
-                          <div className="form-section" style={{ gridColumn: '1 / span 2' }}>
-                            <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>About Preview (Home Page)</h3>
-                            <div className="form-group" style={{ marginBottom: '20px' }}>
-                              <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>About Title</label>
-                              <input type="text" name="aboutTitle" value={siteContent.aboutTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                              <div className="form-group">
-                                <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Description Paragraph 1</label>
-                                <textarea name="aboutDesc1" value={siteContent.aboutDesc1} onChange={handleSiteContentChange} style={{ width: '100%', height: '120px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
-                              </div>
-                              <div className="form-group">
-                                <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Description Paragraph 2</label>
-                                <textarea name="aboutDesc2" value={siteContent.aboutDesc2} onChange={handleSiteContentChange} style={{ width: '100%', height: '120px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ABOUT PAGE EDITOR */}
-                    {selectedPage === 'about' && (
-                      <div className="fade-in">
-                        <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Full About Page Detail</h3>
-                        <div className="form-group" style={{ marginBottom: '25px' }}>
-                          <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Our Story</label>
-                          <textarea name="aboutPageStory" value={siteContent.aboutPageStory} onChange={handleSiteContentChange} style={{ width: '100%', height: '150px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Our Mission</label>
-                            <textarea name="aboutPageMission" value={siteContent.aboutPageMission} onChange={handleSiteContentChange} style={{ width: '100%', height: '100px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Our Vision</label>
-                            <textarea name="aboutPageVision" value={siteContent.aboutPageVision} onChange={handleSiteContentChange} style={{ width: '100%', height: '100px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* SERVICES PAGES EDITOR */}
-                    {selectedPage === 'services' && (
-                      <div className="fade-in">
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-                          {/* eCab */}
-                          <div className="form-section">
-                            <h3 style={{ color: '#f1c40f', borderBottom: '1px solid #333', paddingBottom: '10px' }}>eCab Service</h3>
-                            <div className="form-group" style={{ margin: '15px 0' }}>
-                              <label style={{ color: '#ccc' }}>Hero Title</label>
-                              <input type="text" name="ecabHeroTitle" value={siteContent.ecabHeroTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group">
-                              <label style={{ color: '#ccc' }}>Intro Text</label>
-                              <textarea name="ecabDescription" value={siteContent.ecabDescription} onChange={handleSiteContentChange} style={{ width: '100%', height: '100px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-                          {/* eShip */}
-                          <div className="form-section">
-                            <h3 style={{ color: '#3498db', borderBottom: '1px solid #333', paddingBottom: '10px' }}>eShipping</h3>
-                            <div className="form-group" style={{ margin: '15px 0' }}>
-                              <label style={{ color: '#ccc' }}>Hero Title</label>
-                              <input type="text" name="shippingHeroTitle" value={siteContent.shippingHeroTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group">
-                              <label style={{ color: '#ccc' }}>Intro Text</label>
-                              <textarea name="shippingDescription" value={siteContent.shippingDescription} onChange={handleSiteContentChange} style={{ width: '100%', height: '100px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-                          {/* eCargo */}
-                          <div className="form-section">
-                            <h3 style={{ color: '#e67e22', borderBottom: '1px solid #333', paddingBottom: '10px' }}>eCargo</h3>
-                            <div className="form-group" style={{ margin: '15px 0' }}>
-                              <label style={{ color: '#ccc' }}>Hero Title</label>
-                              <input type="text" name="cargoHeroTitle" value={siteContent.cargoHeroTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                            <div className="form-group">
-                              <label style={{ color: '#ccc' }}>Intro Text</label>
-                              <textarea name="cargoDescription" value={siteContent.cargoDescription} onChange={handleSiteContentChange} style={{ width: '100%', height: '100px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* FAQ PAGE EDITOR */}
-                    {selectedPage === 'faq' && (
-                      <div className="fade-in">
-                        <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>FAQ Support Centers</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>General FAQ Title</label>
-                            <input type="text" name="faqGeneralTitle" value={siteContent.faqGeneralTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Support Center Title</label>
-                            <input type="text" name="faqSupportTitle" value={siteContent.faqSupportTitle} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                        </div>
-                        <p style={{ marginTop: '20px', color: '#888', fontStyle: 'italic' }}>Note: Individual FAQ questions management coming soon...</p>
-                      </div>
-                    )}
-
-                    {/* LEGAL PAGES EDITOR */}
-                    {selectedPage === 'legal' && (
-                      <div className="fade-in">
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                          <div className="form-section">
-                            <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Privacy Policy Content</h3>
-                            <textarea name="privacyPolicyContent" value={siteContent.privacyPolicyContent} onChange={handleSiteContentChange} style={{ width: '100%', height: '300px', padding: '15px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', lineFamily: 'monospace' }} />
-                          </div>
-                          <div className="form-section">
-                            <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Terms & Conditions Content</h3>
-                            <textarea name="termsConditionsContent" value={siteContent.termsConditionsContent} onChange={handleSiteContentChange} style={{ width: '100%', height: '300px', padding: '15px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', lineFamily: 'monospace' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* SOCIAL LINKS EDITOR */}
-                    {selectedPage === 'social' && (
-                      <div className="fade-in">
-                        <h3 style={{ color: '#ff6b35', borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px' }}>Social Media & Links</h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Facebook Link</label>
-                            <input type="text" name="facebookLink" value={siteContent.facebookLink} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Twitter (X) Link</label>
-                            <input type="text" name="twitterLink" value={siteContent.twitterLink} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>Instagram Link</label>
-                            <input type="text" name="instagramLink" value={siteContent.instagramLink} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                          <div className="form-group">
-                            <label style={{ display: 'block', color: '#ccc', marginBottom: '8px' }}>LinkedIn Link</label>
-                            <input type="text" name="linkedinLink" value={siteContent.linkedinLink} onChange={handleSiteContentChange} style={{ width: '100%', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div style={{ marginTop: '40px', textAlign: 'right', borderTop: '1px solid #333', paddingTop: '20px' }}>
-                      <button type="submit" disabled={isSavingContent} className="cta-button magnetic" style={{ padding: '15px 40px', fontSize: '1.1rem', height: 'auto', borderRadius: '8px' }}>
-                        {isSavingContent ? 'Syncing with Server...' : `Update ${selectedPage.charAt(0).toUpperCase() + selectedPage.slice(1)} Data`}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </main>
 
@@ -1216,6 +1147,84 @@ const AdminDashboard = () => {
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
                 <button type="button" onClick={() => setEditingUser(null)} style={{ backgroundColor: '#444', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 1, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT SHIPMENT MODAL */}
+      {editingShipment && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+            <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Shipment</h2>
+            <form onSubmit={handleEditShipmentSubmit}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Product Name</label>
+                <input type="text" name="productName" value={editShipmentFormData.productName || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Category</label>
+                <input type="text" name="category" value={editShipmentFormData.category || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Origin Country</label>
+                <input type="text" name="originCountry" value={editShipmentFormData.originCountry || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Destination City</label>
+                <input type="text" name="destinationCity" value={editShipmentFormData.destinationCity || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Preferred Port</label>
+                <input type="text" name="preferredPort" value={editShipmentFormData.preferredPort || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Notes</label>
+                <textarea name="notes" value={editShipmentFormData.notes || ''} onChange={handleEditShipmentChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
+                <button type="button" onClick={() => setEditingShipment(null)} style={{ backgroundColor: '#444', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 1, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT CARGO MODAL */}
+      {editingCargo && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+            <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Cargo Order</h2>
+            <form onSubmit={handleEditCargoSubmit}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Receiver Name</label>
+                <input type="text" name="receiverName" value={editCargoFormData.receiverName || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Receiver Phone</label>
+                <input type="text" name="receiverPhone" value={editCargoFormData.receiverPhone || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Cargo Type</label>
+                <input type="text" name="cargoType" value={editCargoFormData.cargoType || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Delivery Priority</label>
+                <input type="text" name="deliveryPriority" value={editCargoFormData.deliveryPriority || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Destination City</label>
+                <input type="text" name="destinationCity" value={editCargoFormData.destinationCity || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Delivery Address</label>
+                <textarea name="deliveryAddress" value={editCargoFormData.deliveryAddress || ''} onChange={handleEditCargoChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
+                <button type="button" onClick={() => setEditingCargo(null)} style={{ backgroundColor: '#444', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 1, cursor: 'pointer' }}>Cancel</button>
               </div>
             </form>
           </div>

@@ -214,5 +214,67 @@ router.patch('/cargo/:id/status', async (req, res) => {
     }
 });
 
-// 8. Export the router (ONLY once at the end)
+// 10. DELETE shipment
+router.delete('/shipments/:id', async (req, res) => {
+    try {
+        const deletedShipment = await Shipment.findByIdAndDelete(req.params.id);
+        if (!deletedShipment) {
+            return res.status(404).json({ message: "Shipment not found" });
+        }
+        res.status(200).json({ message: "Shipment deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting shipment", error: error.message });
+    }
+});
+
+// 11. PUT update shipment
+router.put('/shipments/:id', async (req, res) => {
+    try {
+        const updatedShipment = await Shipment.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedShipment) {
+            return res.status(404).json({ message: "Shipment not found" });
+        }
+        res.status(200).json({ message: "Shipment updated successfully", shipment: updatedShipment });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating shipment", error: error.message });
+    }
+});
+
+// 12. DELETE cargo
+router.delete('/cargo/:id', async (req, res) => {
+    try {
+        const deletedCargo = await Cargo.findByIdAndDelete(req.params.id);
+        if (!deletedCargo) {
+            return res.status(404).json({ message: "Cargo not found" });
+        }
+        res.status(200).json({ message: "Cargo deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting cargo", error: error.message });
+    }
+});
+
+// 13. PUT update cargo
+router.put('/cargo/:id', async (req, res) => {
+    try {
+        const updatedCargo = await Cargo.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedCargo) {
+            return res.status(404).json({ message: "Cargo not found" });
+        }
+        res.status(200).json({ message: "Cargo updated successfully", cargo: updatedCargo });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating cargo", error: error.message });
+    }
+});
+
+// 14. Export the router (ONLY once at the end)
 module.exports = router;
