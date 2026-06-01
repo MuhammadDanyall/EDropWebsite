@@ -24,11 +24,15 @@ const loginValidation = [
 // Apply stricter rate limit to all auth routes
 router.use(authLimiter);
 
+// Use Brevo (Sendinblue) SMTP for better production deliverability
+// Create a free account at https://brevo.com/
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.BREVO_USER || process.env.EMAIL_USER,
+        pass: process.env.BREVO_PASS || process.env.EMAIL_PASS
     },
     tls: {
         rejectUnauthorized: false
