@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const { authLimiter, validateInputs } = require('../middleware/security');
 const { body } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const https = require('https');
 
 // Validation Schemas
 const signupValidation = [
@@ -24,30 +25,120 @@ const loginValidation = [
 // Apply stricter rate limit to all auth routes
 router.use(authLimiter);
 
-// Use Brevo (Sendinblue) SMTP for better production deliverability
-// Create a free account at https://brevo.com/
-const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: process.env.BREVO_USER || process.env.EMAIL_USER,
-        pass: process.env.BREVO_PASS || process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
+// Helper function to send emails via Brevo API
+const sendBrevoEmail = async (to, subject, html) => {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            sender: { email: process.env.BREVO_USER || process.env.EMAIL_USER || 'no-reply@edrop.com' },
+            to: [{ email: to }],
+            subject: subject,
+            htmlContent: html
+        });
 
-// Verify transporter connection
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('❌ Email transporter verification failed:', error);
-        console.error('Please check your EMAIL_USER and EMAIL_PASS environment variables');
-    } else {
-        console.log('✅ Email transporter is ready to send emails');
-    }
-});
+        const options = {
+            hostname: 'api.brevo.com',
+            path: '/v3/smtp/email',
+            method: 'POST',
+            headers: {
+                'api-key': process.env.BREVO_API_KEY,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data)
+            }
+        };
+
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    console.log('✅ Email sent via Brevo API');
+                    resolve();
+                } else {
+                    console.error('❌ Brevo API Error:', body);
+                    reject(new Error('Failed to send email via Brevo API'));
+                }
+            });
+        });
+
+        req.on('error', (error) => {
+            console.error('❌ Brevo API Request Error:', error);
+            reject(error);
+        });
+
+        req.write(data);
+        req.end();
+    });
+};
+
+// Choose email sending method based on available env vars
+let sendEmail;
+if (process.env.BREVO_API_KEY) {
+    // Use Brevo API if API key is provided
+    console.log('📧 Using Brevo API for emails');
+    sendEmail = async (to, subject, html, text) => {
+        await sendBrevoEmail(to, subject, html);
+    };
+} else if (process.env.BREVO_USER && process.env.BREVO_PASS) {
+    // Use Brevo SMTP if credentials are provided
+    console.log('📧 Using Brevo SMTP for emails');
+    const transporter = nodemailer.createTransport({
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.BREVO_USER,
+            pass: process.env.BREVO_PASS
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    sendEmail = async (to, subject, html, text) => {
+        await transporter.sendMail({
+            from: process.env.BREVO_USER || process.env.EMAIL_USER,
+            to: to,
+            subject: subject,
+            html: html,
+            text: text || html.replace(/<[^>]*>/g, '')
+        });
+    };
+} else {
+    // Fallback to Gmail if nothing else
+    console.log('📧 Using Gmail for emails (not recommended for production)');
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    sendEmail = async (to, subject, html, text) => {
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: to,
+            subject: subject,
+            html: html,
+            text: text || html.replace(/<[^>]*>/g, '')
+        });
+    };
+}
+
+// Verify email setup is ready
+console.log('✅ Email system initialized');
+if (process.env.BREVO_API_KEY) {
+    console.log('   → Using Brevo API');
+} else if (process.env.BREVO_USER && process.env.BREVO_PASS) {
+    console.log('   → Using Brevo SMTP');
+} else if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    console.log('   → Using Gmail (not recommended for production)');
+} else {
+    console.warn('   ⚠️  No email credentials found - emails will fail');
+}
 
 const validatePassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
@@ -163,8 +254,12 @@ router.post('/login', loginValidation, async (req, res) => {
             };
             
             try {
-                const info = await transporter.sendMail(mailOptions);
-                console.log("✅ OTP Email Sent Successfully:", info.response);
+                await sendEmail(
+                    user.email,
+                    "Admin Dashboard Login OTP",
+                    mailOptions.html
+                );
+                console.log("✅ OTP Email Sent Successfully");
             } catch (error) {
                 console.error("❌ OTP Email Failed to Send");
                 console.error("Error message:", error.message);
@@ -218,8 +313,13 @@ router.post('/forgot-password', async (req, res) => {
         };
 
         try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log("✅ Password Reset OTP Email Sent Successfully:", info.response);
+            await sendEmail(
+                email,
+                "E-Drop Password Reset OTP",
+                `<div>Your OTP for password reset is: <strong>${otp}</strong><br>It is valid for 10 minutes.</div>`,
+                mailOptions.text
+            );
+            console.log("✅ Password Reset OTP Email Sent Successfully");
             res.status(200).json({ message: "OTP sent to your email! " });
         } catch (error) {
             console.error("❌ Password Reset OTP Email Failed to Send");

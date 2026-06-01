@@ -6,7 +6,42 @@ Aapka OTP local server par theek aa raha hai lekin Vercel/Railway par nahi aa ra
 
 ## Best Solution: Use Brevo (Sendinblue) - 100% Working!
 
-Gmail ki jagah Brevo use karein - ye free hai, production-ready hai, aur Vercel/Railway par bilkul smoothly kaam karta hai!
+Gmail ki jagah Brevo use karein - ye free hai, production-ready hai, aur Vercel/Railway par bilkul smoothly kaam karta hai! Humne code mein **API key aur SMTP dono ko support kiya hai** - aap jo aasan lage use kar sakte hain!
+
+---
+
+## Option 1: Brevo API Key Use Karein (SABSE AASAN!)
+
+Aapke paas already API key hai! To bas ye set karein:
+
+### Step 1: Environment Variables Set Karein
+
+**Local (.env file):**
+```env
+BREVO_API_KEY=your-brevo-api-key-here
+BREVO_USER=your-brevo-email@example.com  # (jisse aapne Brevo register kiya)
+```
+
+**Vercel:**
+1. Project → Settings → Environment Variables
+2. Add these:
+   - `BREVO_API_KEY`: your-brevo-api-key-here
+   - `BREVO_USER`: your-brevo-email@example.com
+   - (Baaki variables MONGO_URI, GEMINI_API_KEY already set rakhiye)
+3. Redeploy karein!
+
+**Railway:**
+1. Project → Variables
+2. Add these variables:
+   - `BREVO_API_KEY`: your-brevo-api-key-here
+   - `BREVO_USER`: your-brevo-email@example.com
+3. Redeploy karein!
+
+---
+
+## Option 2: Brevo SMTP Use Karein
+
+Agar API key ke bajaye SMTP use karna chahe:
 
 ### Step 1: Brevo Account Create Karein
 1. https://brevo.com/ par jaiye
@@ -45,7 +80,9 @@ BREVO_PASS=your-brevo-master-password
    - `BREVO_PASS`: your-brevo-master-password
 3. Redeploy karein!
 
-### Step 4: Enjoy!
+---
+
+## Step 4: Enjoy!
 
 Ab har baar OTP aapke email par aayega! Bilkul smooth!
 
@@ -72,6 +109,7 @@ Agar kabhi email nahi aaye, toh hamesha server logs check karein. OTP waha hames
 
 Local mein test karne ke liye:
 1. Server start karein aur console check karein
-2. "✅ Email transporter is ready to send emails" message aana chahiye
-3. Login try karein, console mein aapko OTP clearly dikhega: `🔐 ADMIN LOGIN OTP GENERATED: 123456`
-4. Email par bhi OTP aana chahiye!
+2. "✅ Email system initialized" message aana chahiye
+3. Console mein dekhein ki "→ Using Brevo API" ya "→ Using Brevo SMTP" likha aaye
+4. Login try karein, console mein aapko OTP clearly dikhega: `🔐 ADMIN LOGIN OTP GENERATED: 123456`
+5. Email par bhi OTP aana chahiye!
