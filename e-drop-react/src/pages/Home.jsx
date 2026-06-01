@@ -623,9 +623,9 @@ const Home = ({ onAuthClick }) => {
                                 desc: 'Talented app developer focused on creating seamless mobile applications with cutting-edge technology.',
                                 img: '/pictures/yasir.jpeg',
                                 social: {
-                                    linkedin: '#',
-                                    github: '#',
-                                    email: '#'
+                                    linkedin: 'https://www.linkedin.com/in/yasir-ahmad-03b283294?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
+                                    github: 'https://github.com/MaverickData114',
+                                    email: 'https://mail.google.com/mail/?view=cm&fs=1&to=itzyasir@gmail.com'
                                 }
                             }
                         ].map((m, i) => (
