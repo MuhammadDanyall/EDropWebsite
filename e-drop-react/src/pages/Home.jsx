@@ -612,9 +612,9 @@ const Home = ({ onAuthClick }) => {
                                 desc: 'Expert mobile app developer specializing in cross-platform solutions and innovative user experiences.',
                                 img: '/pictures/Hassan Zeb.jpeg',
                                 social: {
-                                    linkedin: '#',
-                                    github: '#',
-                                    email: '#'
+                                    linkedin: 'https://www.linkedin.com/in/hassan-zeb-12111234b?utm_source=share_via&utm_content=profile&utm_medium=member_android',
+                                    github: 'https://github.com/hassan32-sudo',
+                                    email: 'https://mail.google.com/mail/?view=cm&fs=1&to=hassan32.kust.edu@gmail.com'
                                 }
                             },
                             {
