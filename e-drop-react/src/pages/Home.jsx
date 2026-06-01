@@ -603,7 +603,7 @@ const Home = ({ onAuthClick }) => {
                                 social: {
                                     linkedin: 'https://www.linkedin.com/in/muhammad-danyal-6a3b263a4?utm_source=share_via&utm_content=profile&utm_medium=member_android',
                                     github: 'https://github.com/MuhammadDanyall',
-                                    email: 'mailto:mdanyal0077@gmail.com'
+                                    email: 'https://mail.google.com/mail/?view=cm&fs=1&to=mdanyal0077@gmail.com'
                                 }
                             },
                             {
@@ -642,7 +642,7 @@ const Home = ({ onAuthClick }) => {
                                     <div className="member-social">
                                         <a href={m.social?.linkedin || '#'} target={m.social?.linkedin && m.social.linkedin !== '#' ? "_blank" : undefined} rel="noopener noreferrer" className="social-link"><i className="fab fa-linkedin"></i></a>
                                         <a href={m.social?.github || '#'} target={m.social?.github && m.social.github !== '#' ? "_blank" : undefined} rel="noopener noreferrer" className="social-link"><i className="fab fa-github"></i></a>
-                                        <a href={m.social?.email || '#'} className="social-link"><i className="fas fa-envelope"></i></a>
+                                        <a href={m.social?.email || '#'} target={m.social?.email && m.social.email !== '#' ? "_blank" : undefined} rel="noopener noreferrer" className="social-link"><i className="fas fa-envelope"></i></a>
                                     </div>
                                 </div>
                             </div>
