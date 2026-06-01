@@ -599,19 +599,34 @@ const Home = ({ onAuthClick }) => {
                                 name: 'Muhammad Danyal',
                                 role: 'Website Developer',
                                 desc: 'Full-stack web developer passionate about creating innovative digital solutions and user-friendly interfaces.',
-                                img: '/pictures/Muhammad Danyal.jpg'
+                                img: '/pictures/Muhammad Danyal.jpg',
+                                social: {
+                                    linkedin: 'https://www.linkedin.com/in/muhammad-danyal-6a3b263a4?utm_source=share_via&utm_content=profile&utm_medium=member_android',
+                                    github: 'https://github.com/MuhammadDanyall',
+                                    email: 'mailto:mdanyal0077@gmail.com'
+                                }
                             },
                             {
                                 name: 'Hassan Zeb',
                                 role: 'Mobile App Developer',
                                 desc: 'Expert mobile app developer specializing in cross-platform solutions and innovative user experiences.',
-                                img: '/pictures/Hassan Zeb.jpeg'
+                                img: '/pictures/Hassan Zeb.jpeg',
+                                social: {
+                                    linkedin: '#',
+                                    github: '#',
+                                    email: '#'
+                                }
                             },
                             {
                                 name: 'Yasir Ktk',
                                 role: 'Mobile App Developer',
                                 desc: 'Talented app developer focused on creating seamless mobile applications with cutting-edge technology.',
-                                img: '/pictures/yasir.jpeg'
+                                img: '/pictures/yasir.jpeg',
+                                social: {
+                                    linkedin: '#',
+                                    github: '#',
+                                    email: '#'
+                                }
                             }
                         ].map((m, i) => (
                             <div key={i} className="team-member magnetic">
@@ -625,9 +640,9 @@ const Home = ({ onAuthClick }) => {
                                     <h3 className="member-name">{m.name}</h3>
                                     <p className="member-description">{m.desc}</p>
                                     <div className="member-social">
-                                        <a href="#" className="social-link"><i className="fab fa-linkedin"></i></a>
-                                        <a href="#" className="social-link"><i className="fab fa-github"></i></a>
-                                        <a href="#" className="social-link"><i className="fas fa-envelope"></i></a>
+                                        <a href={m.social?.linkedin || '#'} target={m.social?.linkedin && m.social.linkedin !== '#' ? "_blank" : undefined} rel="noopener noreferrer" className="social-link"><i className="fab fa-linkedin"></i></a>
+                                        <a href={m.social?.github || '#'} target={m.social?.github && m.social.github !== '#' ? "_blank" : undefined} rel="noopener noreferrer" className="social-link"><i className="fab fa-github"></i></a>
+                                        <a href={m.social?.email || '#'} className="social-link"><i className="fas fa-envelope"></i></a>
                                     </div>
                                 </div>
                             </div>
