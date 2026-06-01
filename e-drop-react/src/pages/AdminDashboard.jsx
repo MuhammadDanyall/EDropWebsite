@@ -33,11 +33,13 @@ const AdminDashboard = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({ fullName: '', phone: '', role: '' });
 
-  // Edit Shipment/Cargo States
+  // Edit Shipment/Cargo/Message States
   const [editingShipment, setEditingShipment] = useState(null);
   const [editingCargo, setEditingCargo] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
   const [editShipmentFormData, setEditShipmentFormData] = useState({});
   const [editCargoFormData, setEditCargoFormData] = useState({});
+  const [editMessageFormData, setEditMessageFormData] = useState({});
 
   // Website Content States
   const [siteContent, setSiteContent] = useState({
@@ -266,8 +268,8 @@ const AdminDashboard = () => {
       setUsers(users.filter(u => u._id !== userId));
       alert("User deleted successfully.");
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert("Failed to delete user.");
+      console.error('Error deleting user:', error.response || error.message || error);
+      alert(`Failed to delete user: ${error.response?.data?.message || error.message || 'Unknown error'}`);
     }
   };
 
@@ -318,8 +320,8 @@ const AdminDashboard = () => {
       setShipments(shipments.filter(s => s._id !== shipmentId));
       alert("Shipment deleted successfully.");
     } catch (error) {
-      console.error('Error deleting shipment:', error);
-      alert("Failed to delete shipment.");
+      console.error('Error deleting shipment:', error.response || error.message || error);
+      alert(`Failed to delete shipment: ${error.response?.data?.message || error.message || 'Unknown error'}`);
     }
   };
 
@@ -370,8 +372,60 @@ const AdminDashboard = () => {
       setCargoOrders(cargoOrders.filter(c => c._id !== cargoId));
       alert("Cargo order deleted successfully.");
     } catch (error) {
-      console.error('Error deleting cargo:', error);
-      alert("Failed to delete cargo order.");
+      console.error('Error deleting cargo:', error.response || error.message || error);
+      alert(`Failed to delete cargo order: ${error.response?.data?.message || error.message || 'Unknown error'}`);
+    }
+  };
+
+  // Function to Edit Message
+  const handleEditMessageClick = (msg) => {
+    setEditingMessage(msg);
+    setEditMessageFormData({ ...msg });
+  };
+
+  const handleEditMessageChange = (e) => {
+    setEditMessageFormData({ ...editMessageFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditMessageSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      const res = await axios.put(
+        `${API_BASE_URL}/api/admin/messages/${editingMessage._id}`,
+        editMessageFormData,
+        {
+          headers: {
+            'user-role': user?.role || '',
+            'user-id': user?.id || ''
+          }
+        }
+      );
+      setMessages(messages.map(m => m._id === editingMessage._id ? res.data.contact : m));
+      setEditingMessage(null);
+      alert("Message updated successfully.");
+    } catch (error) {
+      console.error('Error updating message:', error);
+      alert("Failed to update message.");
+    }
+  };
+
+  // Function to Delete Message
+  const handleDeleteMessage = async (msgId) => {
+    if (!window.confirm("Are you sure you want to delete this message?")) return;
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user'));
+      await axios.delete(`${API_BASE_URL}/api/admin/messages/${msgId}`, {
+        headers: {
+          'user-role': user?.role || '',
+          'user-id': user?.id || ''
+        }
+      });
+      setMessages(messages.filter(m => m._id !== msgId));
+      alert("Message deleted successfully.");
+    } catch (error) {
+      console.error('Error deleting message:', error.response || error.message || error);
+      alert(`Failed to delete message: ${error.response?.data?.message || error.message || 'Unknown error'}`);
     }
   };
 
@@ -864,9 +918,25 @@ const AdminDashboard = () => {
                           <td><span className={`pill ${msg.status || 'pending'}`}>{msg.status || 'pending'}</span></td>
                           <td><span className="date-text">{new Date(msg.createdAt).toLocaleDateString()}</span></td>
                           <td>
-                            <button className="secondary-btn" onClick={() => setReplyingTo(msg)}>
-                              Reply
-                            </button>
+                            <div style={{ display: 'flex', gap: '6px' }}>
+                              <button className="secondary-btn" onClick={() => setReplyingTo(msg)}>
+                                Reply
+                              </button>
+                              <button 
+                                className="secondary-btn" 
+                                style={{ backgroundColor: '#3498db', color: '#fff', borderColor: '#3498db', padding: '4px 10px', fontSize: '0.8rem' }}
+                                onClick={() => handleEditMessageClick(msg)}
+                              >
+                                Edit
+                              </button>
+                              <button 
+                                className="secondary-btn" 
+                                style={{ backgroundColor: '#ff4d4d', color: '#fff', borderColor: '#ff4d4d', padding: '4px 10px', fontSize: '0.8rem' }}
+                                onClick={() => handleDeleteMessage(msg._id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1225,6 +1295,40 @@ const AdminDashboard = () => {
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
                 <button type="button" onClick={() => setEditingCargo(null)} style={{ backgroundColor: '#444', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 1, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT MESSAGE MODAL */}
+      {editingMessage && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+            <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Message</h2>
+            <form onSubmit={handleEditMessageSubmit}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Name</label>
+                <input type="text" name="name" value={editMessageFormData.name || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Email</label>
+                <input type="text" name="email" value={editMessageFormData.email || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Message</label>
+                <textarea name="message" value={editMessageFormData.message || ''} onChange={handleEditMessageChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Status</label>
+                <select name="status" value={editMessageFormData.status || 'pending'} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }}>
+                  <option value="pending">Pending</option>
+                  <option value="replied">Replied</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
+                <button type="button" onClick={() => setEditingMessage(null)} style={{ backgroundColor: '#444', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 1, cursor: 'pointer' }}>Cancel</button>
               </div>
             </form>
           </div>

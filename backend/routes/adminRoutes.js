@@ -276,5 +276,36 @@ router.put('/cargo/:id', async (req, res) => {
     }
 });
 
-// 14. Export the router (ONLY once at the end)
+// 15. Delete message
+router.delete('/messages/:id', async (req, res) => {
+    try {
+        const deletedMessage = await Contact.findByIdAndDelete(req.params.id);
+        if (!deletedMessage) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+        res.status(200).json({ message: "Message deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting message", error: error.message });
+    }
+});
+
+// 16. Update message
+router.put('/messages/:id', async (req, res) => {
+    try {
+        const updatedMessage = await Contact.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!updatedMessage) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+        res.status(200).json({ message: "Message updated successfully", contact: updatedMessage });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating message", error: error.message });
+    }
+});
+
+// 17. Export the router (ONLY once at the end)
 module.exports = router;
