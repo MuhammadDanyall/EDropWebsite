@@ -1162,8 +1162,8 @@ const AdminDashboard = () => {
 
       {/* REPLY MODAL UI */}
       {replyingTo && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '450px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '450px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', marginTop: 'auto', marginBottom: 'auto' }}>
             <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Reply to {replyingTo.name}</h2>
             <div style={{ backgroundColor: '#000', padding: '10px', borderRadius: '6px', marginBottom: '15px' }}>
               <p style={{ color: '#888', fontSize: '0.85rem', margin: 0 }}><strong>User Sent:</strong></p>
@@ -1172,7 +1172,7 @@ const AdminDashboard = () => {
 
             <label style={{ color: '#ccc', fontSize: '0.9rem' }}>Your Response:</label>
             <textarea
-              style={{ width: '100%', height: '120px', marginTop: '8px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', outline: 'none', resize: 'none' }}
+              style={{ width: '100%', height: '120px', marginTop: '8px', padding: '12px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', outline: 'none', resize: 'none', boxSizing: 'border-box' }}
               placeholder="Write your email reply here..."
               value={adminReply}
               onChange={(e) => setAdminReply(e.target.value)}
@@ -1194,21 +1194,21 @@ const AdminDashboard = () => {
 
       {/* EDIT USER MODAL */}
       {editingUser && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '450px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '450px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', marginTop: 'auto', marginBottom: 'auto' }}>
             <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit User</h2>
             <form onSubmit={handleEditSubmit}>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Full Name</label>
-                <input type="text" name="fullName" value={editFormData.fullName} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} required />
+                <input type="text" name="fullName" value={editFormData.fullName} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} required />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Phone</label>
-                <input type="text" name="phone" value={editFormData.phone} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} required />
+                <input type="text" name="phone" value={editFormData.phone} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} required />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Role</label>
-                <select name="role" value={editFormData.role} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }}>
+                <select name="role" value={editFormData.role} onChange={handleEditChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }}>
                   <option value="customer">Customer</option>
                   <option value="driver">Driver</option>
                   <option value="admin">Admin</option>
@@ -1225,33 +1225,33 @@ const AdminDashboard = () => {
 
       {/* EDIT SHIPMENT MODAL */}
       {editingShipment && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', marginTop: 'auto', marginBottom: 'auto' }}>
             <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Shipment</h2>
             <form onSubmit={handleEditShipmentSubmit}>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Product Name</label>
-                <input type="text" name="productName" value={editShipmentFormData.productName || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="productName" value={editShipmentFormData.productName || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Category</label>
-                <input type="text" name="category" value={editShipmentFormData.category || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="category" value={editShipmentFormData.category || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Origin Country</label>
-                <input type="text" name="originCountry" value={editShipmentFormData.originCountry || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="originCountry" value={editShipmentFormData.originCountry || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Destination City</label>
-                <input type="text" name="destinationCity" value={editShipmentFormData.destinationCity || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="destinationCity" value={editShipmentFormData.destinationCity || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Preferred Port</label>
-                <input type="text" name="preferredPort" value={editShipmentFormData.preferredPort || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="preferredPort" value={editShipmentFormData.preferredPort || ''} onChange={handleEditShipmentChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Notes</label>
-                <textarea name="notes" value={editShipmentFormData.notes || ''} onChange={handleEditShipmentChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+                <textarea name="notes" value={editShipmentFormData.notes || ''} onChange={handleEditShipmentChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical', boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
@@ -1264,33 +1264,33 @@ const AdminDashboard = () => {
 
       {/* EDIT CARGO MODAL */}
       {editingCargo && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', marginTop: 'auto', marginBottom: 'auto' }}>
             <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Cargo Order</h2>
             <form onSubmit={handleEditCargoSubmit}>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Receiver Name</label>
-                <input type="text" name="receiverName" value={editCargoFormData.receiverName || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="receiverName" value={editCargoFormData.receiverName || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Receiver Phone</label>
-                <input type="text" name="receiverPhone" value={editCargoFormData.receiverPhone || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="receiverPhone" value={editCargoFormData.receiverPhone || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Cargo Type</label>
-                <input type="text" name="cargoType" value={editCargoFormData.cargoType || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="cargoType" value={editCargoFormData.cargoType || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Delivery Priority</label>
-                <input type="text" name="deliveryPriority" value={editCargoFormData.deliveryPriority || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="deliveryPriority" value={editCargoFormData.deliveryPriority || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Destination City</label>
-                <input type="text" name="destinationCity" value={editCargoFormData.destinationCity || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="destinationCity" value={editCargoFormData.destinationCity || ''} onChange={handleEditCargoChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Delivery Address</label>
-                <textarea name="deliveryAddress" value={editCargoFormData.deliveryAddress || ''} onChange={handleEditCargoChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+                <textarea name="deliveryAddress" value={editCargoFormData.deliveryAddress || ''} onChange={handleEditCargoChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical', boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button type="submit" style={{ backgroundColor: '#3498db', color: 'white', padding: '12px', border: 'none', borderRadius: '6px', flex: 2, cursor: 'pointer', fontWeight: 'bold' }}>Save Changes</button>
@@ -1303,25 +1303,25 @@ const AdminDashboard = () => {
 
       {/* EDIT MESSAGE MODAL */}
       {editingMessage && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', width: '100%', maxWidth: '500px', border: '1px solid #333', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', marginTop: 'auto', marginBottom: 'auto' }}>
             <h2 style={{ color: '#ff6b35', marginTop: 0 }}>Edit Message</h2>
             <form onSubmit={handleEditMessageSubmit}>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Name</label>
-                <input type="text" name="name" value={editMessageFormData.name || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="name" value={editMessageFormData.name || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Email</label>
-                <input type="text" name="email" value={editMessageFormData.email || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }} />
+                <input type="text" name="email" value={editMessageFormData.email || ''} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Message</label>
-                <textarea name="message" value={editMessageFormData.message || ''} onChange={handleEditMessageChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical' }} />
+                <textarea name="message" value={editMessageFormData.message || ''} onChange={handleEditMessageChange} style={{ width: '100%', height: '80px', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', resize: 'vertical', boxSizing: 'border-box' }} />
               </div>
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Status</label>
-                <select name="status" value={editMessageFormData.status || 'pending'} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px' }}>
+                <select name="status" value={editMessageFormData.status || 'pending'} onChange={handleEditMessageChange} style={{ width: '100%', padding: '10px', backgroundColor: '#111', color: '#fff', border: '1px solid #444', borderRadius: '6px', boxSizing: 'border-box' }}>
                   <option value="pending">Pending</option>
                   <option value="replied">Replied</option>
                 </select>
