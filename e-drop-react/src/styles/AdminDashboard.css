@@ -156,7 +156,7 @@
   height: 70px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 0 32px;
   background-color: var(--admin-bg);
   border-bottom: 1px solid var(--admin-border);
@@ -686,21 +686,13 @@
   }
 
   .admin-header {
-    flex-direction: column-reverse; /* Put profile on top, search below */
     padding: 16px;
     height: auto;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .header-search {
-    width: 100%;
-    max-width: 100%;
+    justify-content: flex-end;
   }
 
   .header-profile {
-    width: 100%;
-    justify-content: flex-end;
+    width: auto;
   }
 
   .admin-content-area {
