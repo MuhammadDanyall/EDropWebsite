@@ -29,6 +29,19 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+// Verify transporter connection
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('❌ Email transporter verification failed:', error);
+        console.error('Please check your EMAIL_USER and EMAIL_PASS environment variables');
+    } else {
+        console.log('✅ Email transporter is ready to send emails');
     }
 });
 
@@ -135,13 +148,14 @@ router.post('/login', loginValidation, async (req, res) => {
                     </div>
                 `
             };
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error("Nodemailer OTP Send Error:", error);
-                } else {
-                    console.log("OTP Email Sent Successfully:", info.response);
-                }
-            });
+            
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log("OTP Email Sent Successfully:", info.response);
+            } catch (error) {
+                console.error("Nodemailer OTP Send Error:", error);
+                console.error("Error details:", JSON.stringify(error, null, 2));
+            }
             console.log(`[ADMIN LOGIN OTP]: ${otp}`);
 
             return res.status(200).json({
@@ -182,14 +196,20 @@ router.post('/forgot-password', async (req, res) => {
             text: `Your OTP for password reset is: ${otp}\nIt is valid for 10 minutes.`
         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log("Email Error:", error);
-                return res.status(500).json({ message: "Error sending email." });
-            }
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log("Password Reset OTP Email Sent Successfully:", info.response);
             res.status(200).json({ message: "OTP sent to your email! " });
-        });
+        } catch (error) {
+            console.error("Email Error:", error);
+            console.error("Error details:", JSON.stringify(error, null, 2));
+            return res.status(500).json({ 
+                message: "Error sending email. Please try again later or check server logs.",
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
     } catch (err) {
+        console.error("Forgot Password Server Error:", err);
         res.status(500).json({ message: "Server error", error: err.message });
     }
 });
