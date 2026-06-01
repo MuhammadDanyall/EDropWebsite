@@ -134,6 +134,15 @@ router.post('/login', loginValidation, async (req, res) => {
             user.resetPasswordExpires = Date.now() + 5 * 60 * 1000; // 5 mins expiry
             await user.save();
 
+            // ALWAYS LOG OTP TO CONSOLE FIRST (for development/production debugging)
+            console.log("=");
+            console.log("=");
+            console.log(`🔐 ADMIN LOGIN OTP GENERATED: ${otp}`);
+            console.log(`📧 Recipient: ${user.email}`);
+            console.log(`⏰ Expires: 5 minutes`);
+            console.log("=");
+            console.log("=");
+            
             // Send Email
             const mailOptions = {
                 from: process.env.EMAIL_USER,
@@ -151,12 +160,13 @@ router.post('/login', loginValidation, async (req, res) => {
             
             try {
                 const info = await transporter.sendMail(mailOptions);
-                console.log("OTP Email Sent Successfully:", info.response);
+                console.log("✅ OTP Email Sent Successfully:", info.response);
             } catch (error) {
-                console.error("Nodemailer OTP Send Error:", error);
-                console.error("Error details:", JSON.stringify(error, null, 2));
+                console.error("❌ OTP Email Failed to Send");
+                console.error("Error message:", error.message);
+                console.error("Full error:", JSON.stringify(error, null, 2));
+                console.log("⚠️  But don't worry! You can still use the OTP logged above.");
             }
-            console.log(`[ADMIN LOGIN OTP]: ${otp}`);
 
             return res.status(200).json({
                 success: true,
@@ -187,7 +197,14 @@ router.post('/forgot-password', async (req, res) => {
         user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
         await user.save();
 
-        console.log(`[TESTING OTP for ${email}]: ${otp}`); // For debugging
+        // ALWAYS LOG OTP TO CONSOLE FIRST
+        console.log("=");
+        console.log("=");
+        console.log(`🔑 PASSWORD RESET OTP GENERATED: ${otp}`);
+        console.log(`📧 Recipient: ${email}`);
+        console.log(`⏰ Expires: 10 minutes`);
+        console.log("=");
+        console.log("=");
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -198,11 +215,13 @@ router.post('/forgot-password', async (req, res) => {
 
         try {
             const info = await transporter.sendMail(mailOptions);
-            console.log("Password Reset OTP Email Sent Successfully:", info.response);
+            console.log("✅ Password Reset OTP Email Sent Successfully:", info.response);
             res.status(200).json({ message: "OTP sent to your email! " });
         } catch (error) {
-            console.error("Email Error:", error);
-            console.error("Error details:", JSON.stringify(error, null, 2));
+            console.error("❌ Password Reset OTP Email Failed to Send");
+            console.error("Error message:", error.message);
+            console.error("Full error:", JSON.stringify(error, null, 2));
+            console.log("⚠️  But don't worry! You can still use the OTP logged above.");
             return res.status(500).json({ 
                 message: "Error sending email. Please try again later or check server logs.",
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
