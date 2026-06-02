@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const AuthLog = require('../models/AuthLog');
 const nodemailer = require('nodemailer');
 const { authLimiter, validateInputs } = require('../middleware/security');
 const { body } = require('express-validator');
@@ -181,6 +182,20 @@ router.post('/signup', signupValidation, async (req, res) => {
         });
 
         await newUser.save();
+        
+        // Log signup activity
+        try {
+            const signupLog = new AuthLog({
+                email: email.toLowerCase(),
+                action: 'SIGNUP',
+                role: role || 'customer',
+                ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+            });
+            await signupLog.save();
+        } catch (logErr) {
+            console.error("Failed to save signup auth log:", logErr);
+        }
+
         res.status(201).json({ message: "User registered successfully! " });
     } catch (err) {
         if (err.code === 11000) {
@@ -207,7 +222,20 @@ router.post('/login', loginValidation, async (req, res) => {
 
         const user = await User.findOne(loginQuery);
         
-        if (!user) return res.status(400).json({ message: "User not found! Please Signup first. " });
+        if (!user) {
+            try {
+                const log = new AuthLog({
+                    email: email.toLowerCase(),
+                    action: 'LOGIN_FAILED',
+                    role: 'unknown',
+                    ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+                });
+                await log.save();
+            } catch (logErr) {
+                console.error("Failed to log failed login:", logErr);
+            }
+            return res.status(400).json({ message: "User not found! Please Signup first. " });
+        }
 
         // 2. Check password (Support both plain text and bcrypt hash)
         let isMatch = false;
@@ -218,6 +246,17 @@ router.post('/login', loginValidation, async (req, res) => {
         }
 
         if (!isMatch) {
+            try {
+                const log = new AuthLog({
+                    email: user.email,
+                    action: 'LOGIN_FAILED',
+                    role: user.role,
+                    ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+                });
+                await log.save();
+            } catch (logErr) {
+                console.error("Failed to log failed login:", logErr);
+            }
             return res.status(400).json({ message: "Incorrect password! Please try again." });
         }
 
@@ -228,6 +267,19 @@ router.post('/login', loginValidation, async (req, res) => {
             user.resetPasswordOtp = otp;
             user.resetPasswordExpires = Date.now() + 5 * 60 * 1000; // 5 mins expiry
             await user.save();
+
+            // Log OTP generated
+            try {
+                const log = new AuthLog({
+                    email: user.email,
+                    action: 'ADMIN_OTP_SENT',
+                    role: 'admin',
+                    ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+                });
+                await log.save();
+            } catch (logErr) {
+                console.error("Failed to log admin OTP generation:", logErr);
+            }
 
             // ALWAYS LOG OTP TO CONSOLE FIRST (for development/production debugging)
             console.log("=");
@@ -272,6 +324,19 @@ router.post('/login', loginValidation, async (req, res) => {
                 otpRequired: true,
                 message: "OTP sent to admin email."
             });
+        }
+
+        // Log successful login
+        try {
+            const successLog = new AuthLog({
+                email: user.email,
+                action: 'LOGIN_SUCCESS',
+                role: user.role,
+                ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+            });
+            await successLog.save();
+        } catch (logErr) {
+            console.error("Failed to log login success:", logErr);
         }
 
         res.status(200).json({
@@ -348,12 +413,38 @@ router.post('/verify-admin-otp', async (req, res) => {
             role: 'admin'
         });
 
-        if (!user) return res.status(400).json({ message: "Invalid or expired OTP! " });
+        if (!user) {
+            try {
+                const log = new AuthLog({
+                    email: email.toLowerCase(),
+                    action: 'ADMIN_OTP_FAILED',
+                    role: 'admin',
+                    ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+                });
+                await log.save();
+            } catch (logErr) {
+                console.error("Failed to log admin OTP failure:", logErr);
+            }
+            return res.status(400).json({ message: "Invalid or expired OTP! " });
+        }
 
         // Clear OTP and complete login
         user.resetPasswordOtp = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
+
+        // Log successful admin login
+        try {
+            const log = new AuthLog({
+                email: user.email,
+                action: 'LOGIN_SUCCESS',
+                role: 'admin',
+                ipAddress: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress
+            });
+            await log.save();
+        } catch (logErr) {
+            console.error("Failed to log admin login success:", logErr);
+        }
 
         res.status(200).json({
             success: true,

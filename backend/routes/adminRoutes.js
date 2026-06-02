@@ -5,6 +5,7 @@ const User = require('../models/user');
 const Contact = require('../models/contact');
 const Shipment = require('../models/Shipment');
 const Cargo = require('../models/Cargo');
+const AuthLog = require('../models/AuthLog');
 const { globalLimiter } = require('../middleware/security');
 
 // Global limiter is already applied in server.js, no need to apply twice
@@ -304,6 +305,16 @@ router.put('/messages/:id', async (req, res) => {
         res.status(200).json({ message: "Message updated successfully", contact: updatedMessage });
     } catch (error) {
         res.status(500).json({ message: "Error updating message", error: error.message });
+    }
+});
+
+// 16.5 GET all auth logs
+router.get('/auth-logs', async (req, res) => {
+    try {
+        const logs = await AuthLog.find({}).sort({ timestamp: -1 }).limit(200);
+        res.status(200).json(logs);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching auth logs', error: error.message });
     }
 });
 

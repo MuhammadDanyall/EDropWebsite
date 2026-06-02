@@ -8,6 +8,7 @@ const AdminDashboard = () => {
   const [messages, setMessages] = useState([]);
   const [shipments, setShipments] = useState([]);
   const [cargoOrders, setCargoOrders] = useState([]);
+  const [authLogs, setAuthLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [isAdmin, setIsAdmin] = useState(false);
@@ -96,7 +97,8 @@ const AdminDashboard = () => {
           axios.get(`${API_BASE}/api/admin/messages`, config),
           axios.get(`${API_BASE}/api/content`),
           axios.get(`${API_BASE}/api/admin/shipments`, config),
-          axios.get(`${API_BASE}/api/admin/cargo`, config)
+          axios.get(`${API_BASE}/api/admin/cargo`, config),
+          axios.get(`${API_BASE}/api/admin/auth-logs`, config)
         ]);
 
         if (results[0].status === 'fulfilled') setUsers(results[0].value.data);
@@ -104,6 +106,7 @@ const AdminDashboard = () => {
         if (results[2].status === 'fulfilled') setSiteContent(results[2].value.data);
         if (results[3].status === 'fulfilled') setShipments(results[3].value.data);
         if (results[4].status === 'fulfilled') setCargoOrders(results[4].value.data);
+        if (results[5].status === 'fulfilled') setAuthLogs(results[5].value.data);
 
         // Alert user if there's an auth error in the main datasets
         const authFailed = results.some(r => r.status === 'rejected' && r.reason?.response?.status === 403);
@@ -703,6 +706,10 @@ const AdminDashboard = () => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline></svg>
             Cargo Orders
           </button>
+          <button className={`nav-btn ${activeTab === 'auth-logs' ? 'active' : ''}`} onClick={() => setActiveTab('auth-logs')}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Login/Signup Logs
+          </button>
         </nav>
 
         <div className="admin-sidebar-footer">
@@ -1146,6 +1153,67 @@ const AdminDashboard = () => {
                       )}
                     </tbody>
                   </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Login/Signup Logs Tab Content */}
+          {activeTab === 'auth-logs' && (
+            <div className="fade-in">
+              <h1 className="page-heading">Login/Signup History</h1>
+              <div className="admin-card">
+                <div className="card-body p-0">
+                  <div style={{ overflowX: 'auto', padding: '10px' }}>
+                    <table className="pro-table" style={{ minWidth: '900px' }}>
+                      <thead>
+                        <tr>
+                          <th>User Email</th>
+                          <th>Action / Event</th>
+                          <th>Role</th>
+                          <th>IP Address</th>
+                          <th>Timestamp</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {authLogs.length > 0 ? (
+                          authLogs.map(log => (
+                            <tr key={log._id}>
+                              <td>
+                                <div style={{ fontWeight: '600' }}>{log.email}</div>
+                              </td>
+                              <td>
+                                <span className={`pill ${log.action.toLowerCase().replace(/_/g, '-')}`}>
+                                  {log.action.replace(/_/g, ' ')}
+                                </span>
+                              </td>
+                              <td>
+                                <span className={`pill ${log.role || 'customer'}`}>
+                                  {log.role || 'customer'}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="dim-text" style={{ fontFamily: 'monospace' }}>
+                                  {log.ipAddress || 'Unknown'}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="date-text">
+                                  {new Date(log.timestamp).toLocaleString()}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                              <span className="dim-text">No authentication logs found.</span>
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>

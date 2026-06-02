@@ -502,6 +502,22 @@
   color: #db2777; /* Deeper pink for contrast on light */
 }
 
+/* Authentication Activity Badges */
+.pill.signup, .pill.login-success {
+  background-color: var(--status-success-bg);
+  color: var(--status-success-text);
+}
+
+.pill.login-failed, .pill.admin-otp-failed {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.pill.admin-otp-sent {
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending-text);
+}
+
 /* Shipment & Cargo Status Badges */
 .pill.order-submitted, .pill.booked {
   background-color: rgba(59, 130, 246, 0.15);
