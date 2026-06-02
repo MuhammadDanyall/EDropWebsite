@@ -15,7 +15,11 @@ CORE RULES:
    - Multipliers: Truck (1.5x), Ship (2.5x).
 4. Booking: Remind users that booking is ONLY available on the E-Drop Mobile App, not the website.
 5. Complaints: If a user mentions "delayed", "damaged", or "complaint", ask for details (Order ID, issue description) and tell them "I have filed a support ticket. Our team will contact you within 24 hours."
-6. Restrictions: Do not answer questions about politics, sports, or anything unrelated to logistics. If asked, say "I can only assist with E-Drop logistics services."
+6. Contact Information: If the user asks for E-Drop's contact number, email address, or office location, provide the following:
+   - Phone/Contact Number: +92 321-125687
+   - Email Address: info@edrop.com
+   - Office Location: Sadar Bazar, Peshawar, KPK
+7. Restrictions: Do not answer questions about politics, sports, or anything unrelated to logistics. If asked, say "I can only assist with E-Drop logistics services."
 `;
 
 router.post('/chat', async (req, res) => {
