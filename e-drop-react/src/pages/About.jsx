@@ -124,13 +124,15 @@ const About = ({ onAuthClick }) => {
                         <div className="video-glass-overlay"></div>
                         <video 
                             id="aboutMainVideo"
-                            src="/pictures/edrop_video.mp4" 
                             autoPlay 
                             muted={isMuted} 
                             loop 
                             playsInline 
                             className="about-page-video"
-                        />
+                        >
+                            <source src="/pictures/edrop_video.mp4" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
                         <div className="video-content-overlay">
                             <div className="play-hint">
                                 <i className="fas fa-play-circle"></i>
