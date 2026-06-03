@@ -256,6 +256,35 @@ const About = ({ onAuthClick }) => {
                         50% { transform: scale(1.1); opacity: 0.8; }
                         100% { transform: scale(1); opacity: 1; }
                     }
+                    @media (max-width: 768px) {
+                        .about-video-section {
+                            padding: 60px 15px;
+                        }
+                        .about-video-container {
+                            width: 100%;
+                            border-radius: 16px;
+                            border-width: 2px;
+                            margin: 20px auto;
+                            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+                        }
+                        .play-hint {
+                            bottom: 15px;
+                            left: 15px;
+                            padding: 8px 16px;
+                            font-size: 0.85rem;
+                            gap: 8px;
+                        }
+                        .play-hint i {
+                            font-size: 1.1rem;
+                        }
+                        .video-sound-toggle {
+                            bottom: 15px;
+                            right: 15px;
+                            width: 40px;
+                            height: 40px;
+                            font-size: 1rem;
+                        }
+                    }
                 `}</style>
             </section>
 
