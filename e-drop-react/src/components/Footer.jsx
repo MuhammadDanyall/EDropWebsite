@@ -73,6 +73,9 @@ const Footer = () => {
                     <Link to="/terms-conditions" style={{ color: '#bbb', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.3s ease' }}>Terms & Conditions</Link>
                 </div>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: '#777' }}>&copy; 2026 E Drop. All rights reserved.</p>
+                <p style={{ margin: '8px 0 0', fontSize: '0.9rem', color: '#bbb' }}>
+                    Designed & Developed by <span style={{ color: '#ff6b35', fontWeight: 'bold' }}>Muhammad Danyal</span>
+                </p>
             </div>
         </footer>
     );
